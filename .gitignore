@@ -1,0 +1,12 @@
+/build
+/.idea
+/.gradle
+/out
+*.iml
+/bin
+.classpath
+.project
+.settings
+
+web3j.asc
+stale_outputs_checked

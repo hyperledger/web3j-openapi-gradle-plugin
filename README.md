@@ -1,1 +1,2 @@
-# web3j-openapi-gradle-plugin
+web3j OpenAPI Gradle Plugin
+===================

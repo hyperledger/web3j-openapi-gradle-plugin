@@ -1,0 +1,108 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm' version '1.3.72'
+    id 'java'
+    id 'java-gradle-plugin'
+    id 'idea'
+    id 'jacoco'
+    id "com.diffplug.gradle.spotless" version "3.25.0"
+    id 'io.codearte.nexus-staging' version '0.21.1'
+    id "de.marcphilipp.nexus-publish" version "0.4.0"
+    id 'com.gradle.plugin-publish' version '0.10.1'
+    id "de.undercouch.download" version "4.0.0"
+    id "com.jfrog.bintray" version "1.8.4"
+}
+
+description = 'Gradle plugin providing tasks to generate Web3j-OpenAPI project from Solidity.'
+sourceCompatibility = 1.8
+
+ext {
+    web3jVersion = version
+    web3jOpenAPIVersion = '4.6.001-SNAPSHOT'
+    solidityPluginVersion = '0.2.3'
+    junitVersion = '4.12'
+}
+
+apply {
+    [
+        'bintray',
+        'jacoco',
+        'java',
+        'javadoc',
+        'repositories',
+        'publish',
+        'spotless',
+    ].each { buildScript ->
+        download {
+            src "https://raw.githubusercontent.com/web3j/build-tools/master/gradle/$buildScript/build.gradle"
+            dest "$rootDir/gradle/$buildScript/build.gradle"
+            overwrite true
+            quiet true
+            onlyIfModified true
+        }
+        from("$rootDir/gradle/$buildScript/build.gradle")
+    }
+}
+
+repositories {
+    mavenLocal()
+    maven {
+        url 'https://plugins.gradle.org/m2/'
+    }
+    maven {
+        url 'https://dl.bintray.com/hotkeytlt/maven'
+    }
+}
+
+dependencies {
+    implementation "gradle.plugin.org.web3j.solidity:solidity-gradle-plugin:$solidityPluginVersion"
+
+    implementation "org.web3j.openapi:web3j-openapi-codegen:$web3jOpenAPIVersion"
+    testCompile "junit:junit:$junitVersion"
+}
+
+gradlePlugin {
+    plugins {
+        web3j {
+            id = 'org.web3j.openapi'
+            implementationClass = 'org.web3j.gradle.plugin.Web3jOpenApiPlugin'
+        }
+    }
+}
+
+//pluginBundle {
+//    website = 'https://web3j.io/'
+//    vcsUrl = 'https://github.com/web3j/web3j-openapi-gradle-plugin'
+//    description = 'Gradle plugin providing tasks to generate Web3j-OpenAPI project from Solidity.'
+//    tags = [
+//        'solidity',
+//        'ethereum',
+//        'web3.js',
+//        'web3j',
+//        'openapi'
+//    ]
+//    plugins {
+//        web3j {
+//            // id is captured from java-gradle-plugin configuration
+//            displayName = project.description
+//        }
+//    }
+//}
+
+def generatedResources = "$buildDir/generated-resources/main"
+
+sourceSets {
+    main {
+        output.dir(generatedResources, builtBy: 'generateVersionProperties')
+    }
+}
+
+task generateVersionProperties {
+    doLast {
+        new File(generatedResources).mkdirs()
+        def generated = new File(generatedResources, "version.properties")
+        generated.text = "version=$rootProject.version"
+    }
+}
+tasks.withType(Test) {
+    reports.html.destination file("${reporting.baseDir}/${name}")
+}
