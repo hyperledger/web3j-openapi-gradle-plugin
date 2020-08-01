@@ -16,9 +16,9 @@ description = 'Gradle plugin providing tasks to generate Web3j-OpenAPI project f
 sourceCompatibility = 1.8
 
 ext {
-    web3jVersion = version
+    web3jVersion = '4.6.1'
     web3jOpenAPIVersion = '4.6.001-SNAPSHOT'
-    solidityPluginVersion = '0.2.3'
+    gradlePluginVersion = '4.5.11'
     junitVersion = '4.12'
 }
 
@@ -54,8 +54,10 @@ repositories {
 }
 
 dependencies {
-    implementation "gradle.plugin.org.web3j.solidity:solidity-gradle-plugin:$solidityPluginVersion"
-
+    implementation "org.web3j:web3j-gradle-plugin:$gradlePluginVersion"
+    implementation ("org.web3j:abi:$web3jVersion") {
+        exclude group: 'org.slf4j', module: 'slf4j-nop'
+    }
     implementation "org.web3j.openapi:web3j-openapi-codegen:$web3jOpenAPIVersion"
     testCompile "junit:junit:$junitVersion"
 }
@@ -64,7 +66,7 @@ gradlePlugin {
     plugins {
         web3j {
             id = 'org.web3j.openapi'
-            implementationClass = 'org.web3j.gradle.plugin.Web3jOpenApiPlugin'
+            implementationClass = 'org.web3j.openapi.gradle.plugin.OpenApiPlugin'
         }
     }
 }
