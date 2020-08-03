@@ -35,6 +35,14 @@ class OpenApiPlugin : Plugin<Project> {
         project.afterEvaluate { sourceSets.forEach { sourceSet -> openApiGenerationConfig(project, sourceSet) } }
     }
 
+    /**
+     * Configures Web3j-OpenApi project generation tasks for the Solidity source sets defined in the project (e.g.
+     * main, test).
+     *
+     * <p>The generated task name for the <code>main</code> source set will be <code>
+     * generateWeb3jOpenApi</code>, and for <code>test</code> <code>generateTestWeb3jOpenApi
+     * </code>.
+     */
     private fun openApiGenerationConfig(project: Project, sourceSet: SourceSet) {
         val openApiExtension = InvokerHelper.getProperty(project, OpenApiExtension.NAME) as OpenApiExtension
 
