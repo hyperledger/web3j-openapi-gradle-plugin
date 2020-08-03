@@ -37,19 +37,16 @@ open class OpenApiExtension(
             else value.removeSuffix(".{0}")
         }
 
-    /** Base directory for generated Web3j-OpenApi project.  */
-    var generatedFilesBaseDir: String = ""
-
     /** Excluded contract names for Web3j-OpenApi generation.  */
     var excludedContracts: List<String> = emptyList()
 
     /** Included contract names for Web3j-OpenApi generation.  */
     var includedContracts: List<String> = emptyList()
 
-    /** Contracts ABIs list. Can be folders or files. */
+    /** Contracts ABIs list. Can be folders or files.  */
     var contractsAbis: List<String> = emptyList()
 
-    /** Contracts BINs list. Can be folders or files. */
+    /** Contracts BINs list. Can be folders or files.  */
     var contractsBins: List<String> = emptyList()
 
     /** Bit length for network addresses.  */

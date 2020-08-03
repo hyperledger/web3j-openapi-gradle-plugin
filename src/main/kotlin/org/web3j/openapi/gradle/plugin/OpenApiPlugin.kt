@@ -31,11 +31,11 @@ class OpenApiPlugin : Plugin<Project> {
 
         val sourceSets: SourceSetContainer = project.convention.getPlugin(JavaPluginConvention::class.java).sourceSets
 
-        generateWrappersConfig(project)
-        project.afterEvaluate { sourceSets.forEach { sourceSet -> generateOpenApiConfig(project, sourceSet) } }
+        wrappersGenerationConfig(project)
+        project.afterEvaluate { sourceSets.forEach { sourceSet -> openApiGenerationConfig(project, sourceSet) } }
     }
 
-    private fun generateOpenApiConfig(project: Project, sourceSet: SourceSet) {
+    private fun openApiGenerationConfig(project: Project, sourceSet: SourceSet) {
         val openApiExtension = InvokerHelper.getProperty(project, OpenApiExtension.NAME) as OpenApiExtension
 
         if (openApiExtension.outputDir.isEmpty())
@@ -60,7 +60,7 @@ class OpenApiPlugin : Plugin<Project> {
         val srcSetName = if (sourceSet.name == "main") ""
         else sourceSet.name.capitalize()
 
-        val generateOpenApiTaskName = "generate${srcSetName}OpenAPI"
+        val generateOpenApiTaskName = "generate${srcSetName}Web3jOpenAPI"
 
         val task: OpenApiGenerator = project.tasks.create(generateOpenApiTaskName, OpenApiGenerator::class.java)
 
@@ -89,7 +89,7 @@ class OpenApiPlugin : Plugin<Project> {
         }
     }
 
-    private fun generateWrappersConfig(project: Project) {
+    private fun wrappersGenerationConfig(project: Project) {
         project.pluginManager.apply(Web3jPlugin::class.java)
 
         val openApiExtension = InvokerHelper.getProperty(project, OpenApiExtension.NAME) as OpenApiExtension
