@@ -15,6 +15,7 @@ plugins {
 description = 'Gradle plugin providing tasks to generate Web3j-OpenAPI project from Solidity.'
 sourceCompatibility = 1.8
 
+// FIXME: change to correct versions
 ext {
     web3jVersion = '4.6.1'
     web3jOpenAPIVersion = '4.6.001-SNAPSHOT'
@@ -44,13 +45,14 @@ apply {
 }
 
 repositories {
-    mavenLocal()
+
     maven {
         url 'https://plugins.gradle.org/m2/'
     }
     maven {
         url 'https://dl.bintray.com/hotkeytlt/maven'
     }
+    mavenLocal()
 }
 
 dependencies {
@@ -83,7 +85,7 @@ gradlePlugin {
 //        'openapi'
 //    ]
 //    plugins {
-//        web3j {
+//        openapi {
 //            // id is captured from java-gradle-plugin configuration
 //            displayName = project.description
 //        }

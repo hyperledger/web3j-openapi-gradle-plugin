@@ -13,9 +13,11 @@
 package org.web3j.openapi.gradle.plugin
 
 import org.codehaus.groovy.runtime.InvokerHelper
-import org.gradle.api.DefaultTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.plugins.JavaPluginConvention
+import org.gradle.api.tasks.SourceSet
+import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.SourceTask
 import org.web3j.gradle.plugin.Web3jExtension
 import org.web3j.gradle.plugin.Web3jPlugin
@@ -24,16 +26,16 @@ import java.nio.file.Paths
 
 class OpenApiPlugin : Plugin<Project> {
 
-    val generateOpenApiTaskName = "generateWeb3jOpenAPI"
-
     override fun apply(project: Project) {
         project.extensions.create(OpenApiExtension.NAME, OpenApiExtension::class.java, project)
 
-        generateOpenApiConfig(project)
+        val sourceSets: SourceSetContainer = project.convention.getPlugin(JavaPluginConvention::class.java).sourceSets
+
         generateWrappersConfig(project)
+        project.afterEvaluate { sourceSets.forEach { sourceSet -> generateOpenApiConfig(project, sourceSet) } }
     }
 
-    private fun generateOpenApiConfig(project: Project) {
+    private fun generateOpenApiConfig(project: Project, sourceSet: SourceSet) {
         val openApiExtension = InvokerHelper.getProperty(project, OpenApiExtension.NAME) as OpenApiExtension
 
         if (openApiExtension.outputDir.isEmpty())
@@ -52,6 +54,14 @@ class OpenApiPlugin : Plugin<Project> {
                 ).toString()
         ).apply { mkdirs() }
 
+        // Add source set to the project Java source sets
+        sourceSet.java.srcDir(projectOutputDir)
+
+        val srcSetName = if (sourceSet.name == "main") ""
+        else sourceSet.name.capitalize()
+
+        val generateOpenApiTaskName = "generate${srcSetName}OpenAPI"
+
         val task: OpenApiGenerator = project.tasks.create(generateOpenApiTaskName, OpenApiGenerator::class.java)
 
         task.apply {
@@ -60,18 +70,17 @@ class OpenApiPlugin : Plugin<Project> {
             outputDir = projectOutputDir.absolutePath
             addressLength = openApiExtension.addressBitLength
             contextPath = openApiExtension.contextPath
-            packageName = openApiExtension.generatedPackageName.removeSuffix(".{0}")
+            packageName = openApiExtension.generatedPackageName
             projectName = openApiExtension.projectName
             contractsAbi = getContractsData(openApiExtension.contractsAbis, project)
             contractsBin = getContractsData(openApiExtension.contractsBins, project)
         }
 
-        // FIXME: should we depend on 'generate<sourceSetName>ContractWrappers' too ?
-//        val wrapperGenerationTask = project.tasks.getByName("generateContractWrappers") as SourceTask
-//        task.also {
-//            it.dependsOn(wrapperGenerationTask)
-//            it.mustRunAfter(wrapperGenerationTask)
-//        }
+        val wrapperGenerationTask = project.tasks.getByName("generate${srcSetName}ContractWrappers") as SourceTask
+        task.also {
+            it.dependsOn(wrapperGenerationTask)
+            it.mustRunAfter(wrapperGenerationTask)
+        }
     }
 
     private fun getContractsData(dataList: List<String>, project: Project): List<File> {

@@ -46,13 +46,10 @@ open class OpenApiGenerator @Inject constructor() : DefaultTask() {
     var addressLength = Address.DEFAULT_LENGTH / SIZE
 
     @Input
-    @Optional
     lateinit var contextPath: String
 
     @TaskAction
     fun generateOpenApi() {
-        if (contextPath.isEmpty()) contextPath = projectName
-
         val generatorConfiguration = GeneratorConfiguration(
                 projectName,
                 packageName,
