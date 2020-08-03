@@ -24,7 +24,7 @@ import java.io.File
 import java.lang.Byte.SIZE
 import javax.inject.Inject
 
-class OpenApiGenerator @Inject constructor() : DefaultTask() {
+open class OpenApiGenerator @Inject constructor() : DefaultTask() {
 
     @Input
     lateinit var projectName: String

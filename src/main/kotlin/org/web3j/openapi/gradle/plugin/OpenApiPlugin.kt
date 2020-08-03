@@ -16,6 +16,7 @@ import org.codehaus.groovy.runtime.InvokerHelper
 import org.gradle.api.DefaultTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.tasks.SourceTask
 import org.web3j.gradle.plugin.Web3jExtension
 import org.web3j.gradle.plugin.Web3jPlugin
 import java.io.File
@@ -27,10 +28,9 @@ class OpenApiPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
         project.extensions.create(OpenApiExtension.NAME, OpenApiExtension::class.java, project)
-        project.extensions.create(Web3jExtension.NAME, Web3jExtension::class.java, project)
 
-        generateWrappersConfig(project)
         generateOpenApiConfig(project)
+        generateWrappersConfig(project)
     }
 
     private fun generateOpenApiConfig(project: Project) {
@@ -60,22 +60,23 @@ class OpenApiPlugin : Plugin<Project> {
             outputDir = projectOutputDir.absolutePath
             addressLength = openApiExtension.addressBitLength
             contextPath = openApiExtension.contextPath
-            packageName = openApiExtension.generatedPackageName
+            packageName = openApiExtension.generatedPackageName.removeSuffix(".{0}")
             projectName = openApiExtension.projectName
             contractsAbi = getContractsData(openApiExtension.contractsAbis, project)
             contractsBin = getContractsData(openApiExtension.contractsBins, project)
         }
 
-        val wrapperGenerationTask = project.tasks.getByName("generateContractWrappers") as DefaultTask
-        task.also {
-            it.dependsOn(wrapperGenerationTask)
-            it.mustRunAfter(wrapperGenerationTask)
-        }
+        // FIXME: should we depend on 'generate<sourceSetName>ContractWrappers' too ?
+//        val wrapperGenerationTask = project.tasks.getByName("generateContractWrappers") as SourceTask
+//        task.also {
+//            it.dependsOn(wrapperGenerationTask)
+//            it.mustRunAfter(wrapperGenerationTask)
+//        }
     }
 
     private fun getContractsData(dataList: List<String>, project: Project): List<File> {
         return dataList.toMutableList().map { File(it) }.toMutableList().also {
-            it.add(File(Paths.get(project.buildDir.absolutePath, "main", "solidity").toString()))
+            it.add(File(Paths.get(project.buildDir.absolutePath, "resources", "main", "solidity").toString()))
         }
     }
 
@@ -91,9 +92,7 @@ class OpenApiPlugin : Plugin<Project> {
                     openApiExtension.outputDir,
                     openApiExtension.projectName,
                     "server",
-                    "src",
-                    "main",
-                    "java"
+                    "src"
             ).toString()
             excludedContracts = openApiExtension.excludedContracts
             includedContracts = openApiExtension.includedContracts
