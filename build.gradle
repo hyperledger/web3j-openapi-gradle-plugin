@@ -20,7 +20,7 @@ ext {
     web3jVersion = '4.6.1'
     web3jOpenAPIVersion = '4.6.001-SNAPSHOT'
     gradlePluginVersion = '4.5.11'
-    junitVersion = '4.12'
+    junitVersion = '5.5.2'
 }
 
 apply {
@@ -61,7 +61,7 @@ dependencies {
         exclude group: 'org.slf4j', module: 'slf4j-nop'
     }
     implementation "org.web3j.openapi:web3j-openapi-codegen:$web3jOpenAPIVersion"
-    testCompile "junit:junit:$junitVersion"
+    testImplementation "org.junit.jupiter:junit-jupiter:${junitVersion}"
 }
 
 gradlePlugin {
@@ -109,4 +109,5 @@ task generateVersionProperties {
 }
 tasks.withType(Test) {
     reports.html.destination file("${reporting.baseDir}/${name}")
+    useJUnitPlatform()
 }
