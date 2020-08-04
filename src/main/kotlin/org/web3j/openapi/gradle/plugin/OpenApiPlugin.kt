@@ -85,9 +85,11 @@ class OpenApiPlugin : Plugin<Project> {
         }
 
         val wrapperGenerationTask = project.tasks.getByName("generate${srcSetName}ContractWrappers") as SourceTask
+        val compileJava = project.tasks.getByName("compile${srcSetName}Java") as SourceTask
         task.also {
             it.dependsOn(wrapperGenerationTask)
             it.mustRunAfter(wrapperGenerationTask)
+            compileJava.dependsOn(it)
         }
     }
 
