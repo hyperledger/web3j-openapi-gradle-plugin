@@ -51,7 +51,7 @@ project for all the contracts specified in the configuration.
 ### Project dependencies
 
 The plugin requires the [gradle-tooling-api](https://docs.gradle.org/current/userguide/embedding.html) dependency to be declared in your project
-**in case you want to generate the `SwaggerUI`**. If not, you won't need it.
+**in case you want to generate the `SwaggerUI`**. If not, you won't need it.  (still in progress)
 
 
 ## Code generation
