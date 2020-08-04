@@ -15,34 +15,24 @@ package org.web3j.openapi.gradle.plugin
 import org.codehaus.groovy.runtime.InvokerHelper
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.artifacts.dsl.RepositoryHandler
-import org.gradle.api.artifacts.repositories.ArtifactRepository
-import org.gradle.api.internal.artifacts.dsl.DefaultRepositoryHandler
 import org.gradle.api.plugins.JavaPluginConvention
-import org.gradle.api.publication.maven.internal.deployer.MavenRemoteRepository
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.SourceTask
-import org.gradle.internal.impldep.org.apache.maven.artifact.ant.RemoteRepository
-import org.web3j.gradle.plugin.Web3jExtension
-import org.web3j.gradle.plugin.Web3jPlugin
+import org.web3j.solidity.gradle.plugin.SolidityCompile
+import org.web3j.solidity.gradle.plugin.SolidityPlugin
 import java.io.File
-import java.net.URI
 import java.nio.file.Paths
 
 class OpenApiPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
         project.extensions.create(OpenApiExtension.NAME, OpenApiExtension::class.java, project)
-
-        project.repositories.maven{mavenArtifactRepository -> mavenArtifactRepository.url = URI("https://repo.gradle.org/gradle/libs-releases") }
+        project.pluginManager.apply(SolidityPlugin::class.java)
 
         val sourceSets: SourceSetContainer = project.convention.getPlugin(JavaPluginConvention::class.java).sourceSets
 
-        project.afterEvaluate {
-            wrappersGenerationConfig(project)
-            sourceSets.forEach { sourceSet -> openApiGenerationConfig(project, sourceSet) }
-        }
+        project.afterEvaluate { sourceSets.forEach { sourceSet -> openApiGenerationConfig(project, sourceSet) } }
     }
 
     /**
@@ -55,15 +45,6 @@ class OpenApiPlugin : Plugin<Project> {
      */
     private fun openApiGenerationConfig(project: Project, sourceSet: SourceSet) {
         val openApiExtension = InvokerHelper.getProperty(project, OpenApiExtension.NAME) as OpenApiExtension
-
-        if (openApiExtension.generatedFilesBaseDir.isEmpty())
-            openApiExtension.generatedFilesBaseDir = Paths.get(
-                    project.buildDir.absolutePath,
-                    "generated",
-                    "source",
-                    "web3j",
-                    "main"
-            ).toString()
 
         File(openApiExtension.generatedFilesBaseDir).deleteRecursively()
         val projectOutputDir: File = File(openApiExtension.generatedFilesBaseDir).apply { mkdirs() }
@@ -79,7 +60,7 @@ class OpenApiPlugin : Plugin<Project> {
         val task: OpenApiGenerator = project.tasks.create(generateOpenApiTaskName, OpenApiGenerator::class.java)
 
         task.apply {
-            group = Web3jExtension.NAME
+            group = "web3j"
             description = "Generates Web3j-OpenAPI project from Solidity contracts."
             generatedFilesBaseDir = projectOutputDir.absolutePath
             addressLength = openApiExtension.addressBitLength
@@ -91,31 +72,13 @@ class OpenApiPlugin : Plugin<Project> {
             generateSwaggerUI = openApiExtension.generateSwaggerUI
         }
 
-        val wrapperGenerationTask = project.tasks.getByName("generate${srcSetName}ContractWrappers") as SourceTask
+        val compileSolidityTask = project.tasks.withType(SolidityCompile::class.java).named("compile" + srcSetName + "Solidity")
         val compileJava = project.tasks.getByName("compile${srcSetName}Java") as SourceTask
+
         task.also {
-            it.dependsOn(wrapperGenerationTask)
-            it.mustRunAfter(wrapperGenerationTask)
+            it.dependsOn(compileSolidityTask)
+            it.mustRunAfter(compileSolidityTask)
             compileJava.dependsOn(it)
-        }
-    }
-
-    private fun wrappersGenerationConfig(project: Project) {
-        project.pluginManager.apply(Web3jPlugin::class.java)
-
-        val openApiExtension = InvokerHelper.getProperty(project, OpenApiExtension.NAME) as OpenApiExtension
-        val web3jExtension = InvokerHelper.getProperty(project, Web3jExtension.NAME) as Web3jExtension
-
-        web3jExtension.apply {
-            generatedPackageName = "${openApiExtension.generatedPackageName}.wrappers"
-            generatedFilesBaseDir = Paths.get(
-                    openApiExtension.generatedFilesBaseDir,
-                    "server",
-                    "src"
-            ).toString()
-            excludedContracts = openApiExtension.excludedContracts
-            includedContracts = openApiExtension.includedContracts
-            addressBitLength = openApiExtension.addressBitLength
         }
     }
 

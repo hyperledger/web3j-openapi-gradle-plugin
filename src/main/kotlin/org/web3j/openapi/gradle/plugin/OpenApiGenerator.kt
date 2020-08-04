@@ -68,6 +68,7 @@ open class OpenApiGenerator @Inject constructor() : DefaultTask() {
             generateCore()
             generateServer()
             generateGradleResources()
+            generateWrappers()
             if (generateSwaggerUI) generateSwaggerUI()
         }
     }

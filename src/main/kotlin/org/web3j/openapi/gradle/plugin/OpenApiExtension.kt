@@ -21,7 +21,7 @@ open class OpenApiExtension(
 ) {
     companion object {
         /** Extension name used in Gradle build files.  */
-		const val NAME = "openapi"
+        const val NAME = "openapi"
     }
 
     /** Generated OpenAPI project name.
@@ -73,7 +73,7 @@ open class OpenApiExtension(
             "source",
             "web3j",
             "main",
-			projectName
+            projectName
     ).toString()
 
     /**
