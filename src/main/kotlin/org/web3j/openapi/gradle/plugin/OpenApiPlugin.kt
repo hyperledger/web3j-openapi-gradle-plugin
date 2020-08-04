@@ -39,8 +39,10 @@ class OpenApiPlugin : Plugin<Project> {
 
         val sourceSets: SourceSetContainer = project.convention.getPlugin(JavaPluginConvention::class.java).sourceSets
 
-        wrappersGenerationConfig(project)
-        project.afterEvaluate { sourceSets.forEach { sourceSet -> openApiGenerationConfig(project, sourceSet) } }
+        project.afterEvaluate {
+            wrappersGenerationConfig(project)
+            sourceSets.forEach { sourceSet -> openApiGenerationConfig(project, sourceSet) }
+        }
     }
 
     /**
@@ -63,12 +65,8 @@ class OpenApiPlugin : Plugin<Project> {
                     "main"
             ).toString()
 
-        val projectOutputDir: File = File(
-                Paths.get(
-                        openApiExtension.generatedFilesBaseDir,
-                        openApiExtension.projectName
-                ).toString()
-        ).apply { mkdirs() }
+        File(openApiExtension.generatedFilesBaseDir).deleteRecursively()
+        val projectOutputDir: File = File(openApiExtension.generatedFilesBaseDir).apply { mkdirs() }
 
         // Add source set to the project Java source sets
         sourceSet.java.srcDir(projectOutputDir)
@@ -83,8 +81,6 @@ class OpenApiPlugin : Plugin<Project> {
         task.apply {
             group = Web3jExtension.NAME
             description = "Generates Web3j-OpenAPI project from Solidity contracts."
-            generatedFilesBaseDir = projectOutputDir.absolutePath
-            description = "Generates Web3j-OpenAPI project from Solidity ABIs and BINs."
             generatedFilesBaseDir = projectOutputDir.absolutePath
             addressLength = openApiExtension.addressBitLength
             contextPath = openApiExtension.contextPath
@@ -104,12 +100,6 @@ class OpenApiPlugin : Plugin<Project> {
         }
     }
 
-    private fun getContractsData(dataList: List<String>, project: Project): List<File> {
-        return dataList.toMutableList().map { File(it) }.toMutableList().also {
-            it.add(File(Paths.get(project.buildDir.absolutePath, "resources", "main", "solidity").toString()))
-        }
-    }
-
     private fun wrappersGenerationConfig(project: Project) {
         project.pluginManager.apply(Web3jPlugin::class.java)
 
@@ -117,16 +107,21 @@ class OpenApiPlugin : Plugin<Project> {
         val web3jExtension = InvokerHelper.getProperty(project, Web3jExtension.NAME) as Web3jExtension
 
         web3jExtension.apply {
-            generatedPackageName = openApiExtension.generatedPackageName
+            generatedPackageName = "${openApiExtension.generatedPackageName}.wrappers"
             generatedFilesBaseDir = Paths.get(
                     openApiExtension.generatedFilesBaseDir,
-                    openApiExtension.projectName,
                     "server",
                     "src"
             ).toString()
             excludedContracts = openApiExtension.excludedContracts
             includedContracts = openApiExtension.includedContracts
             addressBitLength = openApiExtension.addressBitLength
+        }
+    }
+
+    private fun getContractsData(dataList: List<String>, project: Project): List<File> {
+        return dataList.toMutableList().map { File(it) }.toMutableList().also {
+            it.add(File(Paths.get(project.buildDir.absolutePath, "resources", "main", "solidity").toString()))
         }
     }
 }

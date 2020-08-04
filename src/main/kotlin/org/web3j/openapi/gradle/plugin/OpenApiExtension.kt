@@ -14,27 +14,27 @@ package org.web3j.openapi.gradle.plugin
 
 import org.gradle.api.Project
 import org.web3j.abi.datatypes.Address.DEFAULT_LENGTH
+import java.nio.file.Paths
 
 open class OpenApiExtension(
-    private val project: Project
+    project: Project
 ) {
     companion object {
         /** Extension name used in Gradle build files.  */
-        val NAME = "openapi"
+		const val NAME = "openapi"
     }
 
-    /** Generated OpenAPI project name.  */
-    var projectName: String = ""
-        set(value) {
-            field = if (value.isEmpty()) "${project.rootProject.name}Api"
-            else value
-        }
+    /** Generated OpenAPI project name.
+	 *  Default : "{rootProjectName}Api}"
+	 */
+    var projectName: String = "${project.rootProject.name}Api"
 
-    /** Generated package name for Web3j-OpenAPI project.  */
-    var generatedPackageName: String = ""
+    /** Generated package name for Web3j-OpenAPI project.
+	 *  Default : "{group}.openapi"
+	 */
+    var generatedPackageName: String = "${project.group}.openapi"
         set(value) {
-            field = if (value.isEmpty()) "${project.group.toString()}.openapi"
-            else value.removeSuffix(".{0}")
+            field = value.removeSuffix(".{0}")
         }
 
     /** Excluded contract names for Web3j-OpenApi generation.  */
@@ -58,21 +58,28 @@ open class OpenApiExtension(
 	 * The resulting URIs path will be :
 	 * <code> /{contextPath}/{contractName}/... </code>
 	 */
-    var contextPath: String = ""
+    var contextPath: String = projectName
         set(value) {
-            field = if (field.isEmpty()) projectName
-            else value.removePrefix("/")
+            field = value.removePrefix("/")
         }
 
     /**
 	 * Output directory of the generated project.
-	 * Default : build/generated/source/web3j/main
+	 * Default : build/generated/source/web3j/main/{projectName}
 	 */
-    var generatedFilesBaseDir: String = ""
+    var generatedFilesBaseDir: String = Paths.get(
+            project.buildDir.absolutePath,
+            "generated",
+            "source",
+            "web3j",
+            "main",
+			projectName
+    ).toString()
 
     /**
      * Checks whether to generate the SwaggerUI for the generated project.
      * Set to false not to generate it.
+	 * Default : true.
      */
     var generateSwaggerUI: Boolean = true
 }

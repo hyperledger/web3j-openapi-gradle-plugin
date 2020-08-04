@@ -54,8 +54,6 @@ open class OpenApiGenerator @Inject constructor() : DefaultTask() {
 
     @TaskAction
     fun generateOpenApi() {
-        File(generatedFilesBaseDir).deleteRecursively()
-
         val generatorConfiguration = GeneratorConfiguration(
                 projectName,
                 packageName,
