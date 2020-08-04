@@ -74,7 +74,7 @@ class OpenApiPlugin : Plugin<Project> {
 
         task.apply {
             group = Web3jExtension.NAME
-            description = "Generates Web3j-OpenAPI project from Solidity ABIs and BINs."
+            description = "Generates Web3j-OpenAPI project from Solidity contracts."
             outputDir = projectOutputDir.absolutePath
             addressLength = openApiExtension.addressBitLength
             contextPath = openApiExtension.contextPath
