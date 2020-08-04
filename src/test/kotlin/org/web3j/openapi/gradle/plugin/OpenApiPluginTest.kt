@@ -18,24 +18,21 @@ import org.gradle.testkit.runner.TaskOutcome.UP_TO_DATE
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
 import java.io.File
 import java.nio.file.Paths
 
 class OpenApiPluginTest {
 
-    private val testProjectDir: File = createTempDir()
-    private val buildFile: File
-    private val sourceDir: File
-    private val projectName = "testApp"
-
-    init {
-        buildFile = File(testProjectDir, "build.gradle").apply { createNewFile() }
-        val resource = javaClass.classLoader.getResource("solidity/StandardToken.sol")!!
-        sourceDir = File(resource.file).parentFile
-    }
+    @TempDir
+    lateinit var testProjectDir: File
 
     @Test
     fun generateOpenApiTest() {
+        val resource = javaClass.classLoader.getResource("solidity/StandardToken.sol")!!
+        val sourceDir: File = File(resource.file).parentFile
+        val projectName = "testApp"
+
         val buildFileContent = """
 			plugins {
                 id 'java'
@@ -62,6 +59,7 @@ class OpenApiPluginTest {
             }
 		""".trimIndent()
 
+        val buildFile: File = File(testProjectDir, "build.gradle").apply { createNewFile() }
         buildFile.writeText(buildFileContent)
 
         val gradleRunner = GradleRunner.create()
