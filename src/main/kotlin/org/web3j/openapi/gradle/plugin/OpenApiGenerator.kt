@@ -46,6 +46,10 @@ open class OpenApiGenerator @Inject constructor() : DefaultTask() {
     var addressLength = Address.DEFAULT_LENGTH / SIZE
 
     @Input
+    @Optional
+    var generateSwaggerUI = true
+
+    @Input
     lateinit var contextPath: String
 
     @TaskAction
@@ -57,12 +61,14 @@ open class OpenApiGenerator @Inject constructor() : DefaultTask() {
                 loadContractConfigurations(contractsAbi, contractsBin),
                 addressLength,
                 contextPath)
+
         // This is not generating the SwaggerUI
         val generateOpenApi = GenerateOpenApi(generatorConfiguration)
         generateOpenApi.run {
             generateCore()
             generateServer()
             generateGradleResources()
+            if (generateSwaggerUI) generateSwaggerUI()
         }
     }
 }

@@ -82,6 +82,7 @@ class OpenApiPlugin : Plugin<Project> {
             projectName = openApiExtension.projectName
             contractsAbi = getContractsData(openApiExtension.contractsAbis, project)
             contractsBin = getContractsData(openApiExtension.contractsBins, project)
+            generateSwaggerUI = openApiExtension.generateSwaggerUI
         }
 
         val wrapperGenerationTask = project.tasks.getByName("generate${srcSetName}ContractWrappers") as SourceTask

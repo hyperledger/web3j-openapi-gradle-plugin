@@ -69,4 +69,10 @@ open class OpenApiExtension(
 	 * Default : build/generated/source/web3j/main
 	 */
     var outputDir: String = ""
+
+    /**
+     * Checks whether to generate the SwaggerUI for the generated project.
+     * Set to false not to generate it.
+     */
+    var generateSwaggerUI: Boolean = true
 }
