@@ -36,7 +36,7 @@ open class OpenApiGenerator @Inject constructor() : DefaultTask() {
     var contractsAbi: List<File> = emptyList()
 
     @Input
-    lateinit var outputDir: String
+    lateinit var generatedFilesBaseDir: String
 
     @Input
     lateinit var packageName: String
@@ -54,12 +54,12 @@ open class OpenApiGenerator @Inject constructor() : DefaultTask() {
 
     @TaskAction
     fun generateOpenApi() {
-        File(outputDir).deleteRecursively()
+        File(generatedFilesBaseDir).deleteRecursively()
 
         val generatorConfiguration = GeneratorConfiguration(
                 projectName,
                 packageName,
-                outputDir,
+                generatedFilesBaseDir,
                 loadContractConfigurations(contractsAbi, contractsBin),
                 addressLength,
                 contextPath)

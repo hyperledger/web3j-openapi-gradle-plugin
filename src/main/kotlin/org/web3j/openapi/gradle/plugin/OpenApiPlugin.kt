@@ -15,19 +15,27 @@ package org.web3j.openapi.gradle.plugin
 import org.codehaus.groovy.runtime.InvokerHelper
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.artifacts.dsl.RepositoryHandler
+import org.gradle.api.artifacts.repositories.ArtifactRepository
+import org.gradle.api.internal.artifacts.dsl.DefaultRepositoryHandler
 import org.gradle.api.plugins.JavaPluginConvention
+import org.gradle.api.publication.maven.internal.deployer.MavenRemoteRepository
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.SourceTask
+import org.gradle.internal.impldep.org.apache.maven.artifact.ant.RemoteRepository
 import org.web3j.gradle.plugin.Web3jExtension
 import org.web3j.gradle.plugin.Web3jPlugin
 import java.io.File
+import java.net.URI
 import java.nio.file.Paths
 
 class OpenApiPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
         project.extensions.create(OpenApiExtension.NAME, OpenApiExtension::class.java, project)
+
+        project.repositories.maven{mavenArtifactRepository -> mavenArtifactRepository.url = URI("https://repo.gradle.org/gradle/libs-releases") }
 
         val sourceSets: SourceSetContainer = project.convention.getPlugin(JavaPluginConvention::class.java).sourceSets
 
@@ -46,8 +54,8 @@ class OpenApiPlugin : Plugin<Project> {
     private fun openApiGenerationConfig(project: Project, sourceSet: SourceSet) {
         val openApiExtension = InvokerHelper.getProperty(project, OpenApiExtension.NAME) as OpenApiExtension
 
-        if (openApiExtension.outputDir.isEmpty())
-            openApiExtension.outputDir = Paths.get(
+        if (openApiExtension.generatedFilesBaseDir.isEmpty())
+            openApiExtension.generatedFilesBaseDir = Paths.get(
                     project.buildDir.absolutePath,
                     "generated",
                     "source",
@@ -57,7 +65,7 @@ class OpenApiPlugin : Plugin<Project> {
 
         val projectOutputDir: File = File(
                 Paths.get(
-                        openApiExtension.outputDir,
+                        openApiExtension.generatedFilesBaseDir,
                         openApiExtension.projectName
                 ).toString()
         ).apply { mkdirs() }
@@ -76,6 +84,8 @@ class OpenApiPlugin : Plugin<Project> {
             group = Web3jExtension.NAME
             description = "Generates Web3j-OpenAPI project from Solidity contracts."
             outputDir = projectOutputDir.absolutePath
+            description = "Generates Web3j-OpenAPI project from Solidity ABIs and BINs."
+            generatedFilesBaseDir = projectOutputDir.absolutePath
             addressLength = openApiExtension.addressBitLength
             contextPath = openApiExtension.contextPath
             packageName = openApiExtension.generatedPackageName
@@ -109,7 +119,7 @@ class OpenApiPlugin : Plugin<Project> {
         web3jExtension.apply {
             generatedPackageName = openApiExtension.generatedPackageName
             generatedFilesBaseDir = Paths.get(
-                    openApiExtension.outputDir,
+                    openApiExtension.generatedFilesBaseDir,
                     openApiExtension.projectName,
                     "server",
                     "src"

@@ -33,7 +33,7 @@ open class OpenApiExtension(
     /** Generated package name for Web3j-OpenAPI project.  */
     var generatedPackageName: String = ""
         set(value) {
-            field = if (value.isEmpty()) project.group.toString()
+            field = if (value.isEmpty()) "${project.group.toString()}.openapi"
             else value.removeSuffix(".{0}")
         }
 
@@ -68,7 +68,7 @@ open class OpenApiExtension(
 	 * Output directory of the generated project.
 	 * Default : build/generated/source/web3j/main
 	 */
-    var outputDir: String = ""
+    var generatedFilesBaseDir: String = ""
 
     /**
      * Checks whether to generate the SwaggerUI for the generated project.
