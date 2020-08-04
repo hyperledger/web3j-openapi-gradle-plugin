@@ -15,6 +15,7 @@ package org.web3j.openapi.gradle.plugin
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome.SUCCESS
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -70,7 +71,8 @@ class OpenApiPluginTest {
         val buildResult = gradleRunner.build()
         assertNotNull(buildResult.task(":generateWeb3jOpenAPI"))
         assertEquals(SUCCESS, buildResult.task(":generateWeb3jOpenAPI")!!.outcome)
-        assertNotNull(File(
+
+        val outputFolder = File(
                 Paths.get(
                         testProjectDir.absolutePath,
                         "build",
@@ -80,6 +82,8 @@ class OpenApiPluginTest {
                         "main",
                         projectName
                 ).toString()
-        ).list())
+        )
+        assertNotNull(outputFolder.list())
+        assertNotEquals(0, outputFolder.list()!!.size)
     }
 }
