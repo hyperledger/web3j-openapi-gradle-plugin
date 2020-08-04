@@ -51,8 +51,21 @@ project for all the contracts specified in the configuration.
 ### Project dependencies
 
 The plugin requires the [gradle-tooling-api](https://docs.gradle.org/current/userguide/embedding.html) dependency to be declared in your project
-**in case you want to generate the `SwaggerUI`**. If not, you won't need it.  (still in progress)
+**in case you want to generate the `SwaggerUI`**. If that is the case, add the following dependency at the top of your `build.gradle` file :
 
+```groovy
+buildscript{
+    repositories {
+        mavenCentral()
+
+        dependencies{
+            maven {
+                url 'https://repo.gradle.org/gradle/libs-releases'
+            }
+        }
+    }
+}
+```
 
 ## Code generation
 
@@ -64,6 +77,7 @@ openapi {
     generatedFilesBaseDir = "$buildDir/custom/destination"
     excludedContracts = ['Ownable']
     projectName = "TestProject"
+    generateSwaggerUI = false
 }
 ```
 
@@ -78,13 +92,11 @@ The properties accepted by the DSL are listed in the following table:
 | `projectName`           | `String`   | `${rootProject.name}Api`            | Generated Web3j-OpenAPI project name. |
 | `addressBitLength`      | `int`      | `160`                               | Supported address length in bits, by default Ethereum addresses. |
 | `contextPath`           | `String`   | `projectName`                       | Generated Web3j-OpenAPI context path `/{contextPath}/...`. |
-| `generateSwaggerUI`     | `Boolean`  | `true`                              | Generate a [SwaggerUI](https://swagger.io/tools/swagger-ui/) along with the Web3j-OpenAPI project. |
+| `generateSwaggerUI`     | `Boolean`  | `true`                              | Generate a [SwaggerUI](https://swagger.io/tools/swagger-ui/) along with the Web3j-OpenAPI project. Don't forget to add the dependency above if you set this to true. |
 | `contractsAbis`         | `String[]` | `[]`                                | Extra contracts ABIS to use for the Web3j-OpenAPI generation |
 | `contractsBins`         | `String[]` | `[]`                                | Extra contracts BINs to use for the Web3j-OpenAPI generation |
 
 The `generatedPackageName` is a `.` separated list of words. It will be converted to lower case during the generation.
-
-These configurations are similar to the [Web3j-gradle-plugin](https://github.com/web3j/web3j-gradle-plugin).
 
 ## Source sets
 
@@ -106,17 +118,17 @@ sourceSets {
 Check the [Solidity Plugin](https://github.com/web3j/solidity-gradle-plugin)
 documentation to configure the smart contracts source code directories.
 
+Also, you can add more `ABIs` and `BINs` to the generation via 
+the `contractsAbis` and `contractsBins` properties (check the table above).
+
 Output directories for generated Web3j-OpenAPI project
 will be added to your build automatically.
 
 ## Plugin tasks
 
-The [Web3j-gradle-plugin](https://github.com/web3j/web3j-gradle-plugin)
-adds tasks to your project build using a naming convention on a per source set basis
-(i.e. `generateContractWrappers`, `generateTestContractWrappers`).
-
-Similarly, the Web3j-OpenAPI-gradle plugin will add the `generateWeb3jOpenAPI` task for the project `main`
-source set, and a `generate[SourceSet]Web3jOpenAPI` for each remaining source set (e.g. `test`). 
+The ``Web3j-OpenAPI-gradle`` pluginadds tasks to your project build using 
+a naming convention on a per source set basis
+(i.e. `generateWeb3jOpenAPI`, `generate[SourceSet]Web3jOpenAPI`).
 
 To obtain a list and description of all added tasks, run the command:
 
