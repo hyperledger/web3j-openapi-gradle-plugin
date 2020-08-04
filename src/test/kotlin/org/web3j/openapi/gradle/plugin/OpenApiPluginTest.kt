@@ -14,7 +14,6 @@ package org.web3j.openapi.gradle.plugin
 
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome.SUCCESS
-import org.gradle.testkit.runner.TaskOutcome.UP_TO_DATE
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Test
@@ -40,7 +39,7 @@ class OpenApiPluginTest {
             }
 
 			openapi {
-				projectName = '${projectName}'
+				projectName = '$projectName'
 				generatedPackageName = 'com.test'
 			}
 
