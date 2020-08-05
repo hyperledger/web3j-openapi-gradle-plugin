@@ -20,21 +20,21 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'org.web3j:web3j-openapi-gradle-plugin:4.7.11'
+        classpath 'org.web3j:web3j-openapi-gradle-plugin:4.5.11'
     }
 }
 
 apply plugin: 'org.web3j.openapi'
 ```
 
-### Using the plugins DSL
+### Using the plugins DSL (To be checked again)
 
 Alternatively, if you are using the more modern plugins DSL, add the following line to your 
 build file:
 
 ```groovy
 plugins {
-    id 'org.web3j.openapi' version '4.7.11'
+    id 'org.web3j.openapi' version '4.5.11'
 }
 ```
 
