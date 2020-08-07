@@ -19,16 +19,16 @@ import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.SourceTask
-import org.web3j.solidity.gradle.plugin.SolidityCompile
-import org.web3j.solidity.gradle.plugin.SolidityPlugin
+import org.web3j.gradle.plugin.Web3jPlugin
 import java.io.File
 import java.nio.file.Paths
 
 class OpenApiPlugin : Plugin<Project> {
 
     override fun apply(project: Project) {
-        project.extensions.create(OpenApiExtension.NAME, OpenApiExtension::class.java, project)
-        project.pluginManager.apply(SolidityPlugin::class.java)
+        // FIXME: Creating a property with the name web3j is not possible because it already comes with Web3Plugin
+        project.extensions.create("web3j1", OpenApiExtension::class.java, project)
+        project.pluginManager.apply(Web3jPlugin::class.java)
 
         val sourceSets: SourceSetContainer = project.convention.getPlugin(JavaPluginConvention::class.java).sourceSets
 
@@ -44,7 +44,8 @@ class OpenApiPlugin : Plugin<Project> {
      * </code>.
      */
     private fun openApiGenerationConfig(project: Project, sourceSet: SourceSet) {
-        val openApiExtension = InvokerHelper.getProperty(project, OpenApiExtension.NAME) as OpenApiExtension
+        // FIXME: changing the name to "web3j" won't work because there is no cast from Web3jExtension to OpenApiExtension
+        val openApiExtension = InvokerHelper.getProperty(project, "web3j1") as OpenApiExtension
 
         File(openApiExtension.generatedFilesBaseDir).deleteRecursively()
         val projectOutputDir: File = File(openApiExtension.generatedFilesBaseDir).apply { mkdirs() }
@@ -64,20 +65,20 @@ class OpenApiPlugin : Plugin<Project> {
             description = "Generates Web3j-OpenAPI project from Solidity contracts."
             generatedFilesBaseDir = projectOutputDir.absolutePath
             addressLength = openApiExtension.addressBitLength
-            contextPath = openApiExtension.contextPath
+            contextPath = openApiExtension.openApi.contextPath
             packageName = openApiExtension.generatedPackageName
-            projectName = openApiExtension.projectName
-            contractsAbi = getContractsData(openApiExtension.contractsAbis, project)
-            contractsBin = getContractsData(openApiExtension.contractsBins, project)
-            generateSwaggerUI = openApiExtension.generateSwaggerUI
+            projectName = openApiExtension.openApi.projectName
+            contractsAbi = getContractsData(openApiExtension.openApi.contractsAbis, project)
+            contractsBin = getContractsData(openApiExtension.openApi.contractsBins, project)
+            generateSwaggerUI = openApiExtension.openApi.generateSwaggerUI
         }
 
-        val compileSolidityTask = project.tasks.withType(SolidityCompile::class.java).named("compile" + srcSetName + "Solidity")
+        val wrapperGenerationTask = project.tasks.getByName("generate${srcSetName}ContractWrappers") as SourceTask
         val compileJava = project.tasks.getByName("compile${srcSetName}Java") as SourceTask
 
         task.also {
-            it.dependsOn(compileSolidityTask)
-            it.mustRunAfter(compileSolidityTask)
+            it.dependsOn(wrapperGenerationTask)
+            it.mustRunAfter(wrapperGenerationTask)
             compileJava.dependsOn(it)
         }
     }

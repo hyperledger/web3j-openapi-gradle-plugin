@@ -20,7 +20,7 @@ ext {
     web3jVersion = '4.6.1'
     web3jOpenAPIVersion = '4.6.001-SNAPSHOT'
     junitVersion = '5.5.2'
-    solidityPluginVersion = '0.2.3'
+    gradlePluginVersion = '4.5.11'
 }
 
 apply {
@@ -58,7 +58,7 @@ repositories {
 }
 
 dependencies {
-    implementation "org.web3j.solidity:org.web3j.solidity.gradle.plugin:$solidityPluginVersion"
+    implementation "org.web3j:web3j-gradle-plugin:$gradlePluginVersion"
     implementation ("org.web3j:abi:$web3jVersion") {
         exclude group: 'org.slf4j', module: 'slf4j-nop'
     }

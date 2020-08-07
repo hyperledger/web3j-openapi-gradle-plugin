@@ -65,11 +65,7 @@ open class OpenApiGenerator @Inject constructor() : DefaultTask() {
         // This is not generating the SwaggerUI
         val generateOpenApi = GenerateOpenApi(generatorConfiguration)
         generateOpenApi.run {
-            generateCore()
-            generateServer()
-            generateGradleResources()
-            generateWrappers()
-            if (generateSwaggerUI) generateSwaggerUI()
+            generateAll(isCodeOnly = true, withWrappers = false)
         }
     }
 }
