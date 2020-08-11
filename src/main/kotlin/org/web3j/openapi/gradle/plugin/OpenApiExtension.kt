@@ -26,4 +26,8 @@ open class OpenApiExtension(
         project.configure(openApi, closure)
         return openApi
     }
+
+    override fun setGeneratedPackageName(generatedPackageName: String?) {
+        super.setGeneratedPackageName("$generatedPackageName.wrappers")
+    }
 }

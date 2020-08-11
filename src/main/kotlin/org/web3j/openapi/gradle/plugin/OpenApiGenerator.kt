@@ -57,15 +57,18 @@ open class OpenApiGenerator @Inject constructor() : DefaultTask() {
         val generatorConfiguration = GeneratorConfiguration(
                 projectName,
                 packageName,
-                generatedFilesBaseDir,
+                generatedFilesBaseDir.substringBefore("server/src/main"),
                 loadContractConfigurations(contractsAbi, contractsBin),
                 addressLength,
-                contextPath)
+                contextPath,
+//                withSwaggerUi = generateSwaggerUI, FIXME: should be generated for the whole project...
+                withWrappers = false,
+                withBuildFiles = false
+        )
 
-        // This is not generating the SwaggerUI
         val generateOpenApi = GenerateOpenApi(generatorConfiguration)
         generateOpenApi.run {
-            generateAll(isCodeOnly = true, withWrappers = false)
+            generateAll()
         }
     }
 }

@@ -19,20 +19,27 @@ import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.SourceTask
+import org.web3j.gradle.plugin.Web3jExtension
 import org.web3j.gradle.plugin.Web3jPlugin
 import java.io.File
 import java.nio.file.Paths
 
-class OpenApiPlugin : Plugin<Project> {
+class OpenApiPlugin : Plugin<Project>, Web3jPlugin() {
+
+    override fun registerExtensions(project: Project) {
+        project.extensions.create(Web3jExtension.NAME, OpenApiExtension::class.java, project)
+    }
 
     override fun apply(project: Project) {
-        // FIXME: Creating a property with the name web3j is not possible because it already comes with Web3Plugin
-        project.extensions.create("web3j1", OpenApiExtension::class.java, project)
-        project.pluginManager.apply(Web3jPlugin::class.java)
+        super.apply(project)
+        addDependencies(project)
 
         val sourceSets: SourceSetContainer = project.convention.getPlugin(JavaPluginConvention::class.java).sourceSets
 
         project.afterEvaluate { sourceSets.forEach { sourceSet -> openApiGenerationConfig(project, sourceSet) } }
+    }
+
+    private fun addDependencies(project: Project) {
     }
 
     /**
@@ -44,8 +51,7 @@ class OpenApiPlugin : Plugin<Project> {
      * </code>.
      */
     private fun openApiGenerationConfig(project: Project, sourceSet: SourceSet) {
-        // FIXME: changing the name to "web3j" won't work because there is no cast from Web3jExtension to OpenApiExtension
-        val openApiExtension = InvokerHelper.getProperty(project, "web3j1") as OpenApiExtension
+        val openApiExtension = InvokerHelper.getProperty(project, Web3jExtension.NAME) as OpenApiExtension
 
         File(openApiExtension.generatedFilesBaseDir).deleteRecursively()
         val projectOutputDir: File = File(openApiExtension.generatedFilesBaseDir).apply { mkdirs() }
@@ -63,10 +69,10 @@ class OpenApiPlugin : Plugin<Project> {
         task.apply {
             group = "web3j"
             description = "Generates Web3j-OpenAPI project from Solidity contracts."
-            generatedFilesBaseDir = projectOutputDir.absolutePath
+            generatedFilesBaseDir = projectOutputDir.absolutePath.substringBefore("server/src/main")
             addressLength = openApiExtension.addressBitLength
             contextPath = openApiExtension.openApi.contextPath
-            packageName = openApiExtension.generatedPackageName
+            packageName = openApiExtension.generatedPackageName.substringBefore(".wrappers")
             projectName = openApiExtension.openApi.projectName
             contractsAbi = getContractsData(openApiExtension.openApi.contractsAbis, project)
             contractsBin = getContractsData(openApiExtension.openApi.contractsBins, project)
