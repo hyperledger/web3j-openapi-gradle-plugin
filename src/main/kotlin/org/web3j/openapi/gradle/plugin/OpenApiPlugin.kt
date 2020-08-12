@@ -15,6 +15,7 @@ package org.web3j.openapi.gradle.plugin
 import org.codehaus.groovy.runtime.InvokerHelper
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.plugins.ApplicationPlugin
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.SourceSet
@@ -33,9 +34,14 @@ class OpenApiPlugin : Plugin<Project>, Web3jPlugin() {
         registerPlugins(project)
         registerDependencies(project)
         registerRepositories(project)
+        setProperties(project)
 
         val sourceSets: SourceSetContainer = project.convention.getPlugin(JavaPluginConvention::class.java).sourceSets
         project.afterEvaluate { sourceSets.forEach { sourceSet -> openApiGenerationConfig(project, sourceSet) } }
+    }
+
+    private fun setProperties(project: Project) {
+        project.setProperty("mainClassName", "org.web3j.openapi.server.console.RunServerCommand")
     }
 
     override fun registerExtensions(project: Project) {
@@ -45,6 +51,7 @@ class OpenApiPlugin : Plugin<Project>, Web3jPlugin() {
     private fun registerPlugins(project: Project) {
         project.pluginManager.apply(JavaPlugin::class.java)
         project.pluginManager.apply(KotlinPlatformJvmPlugin::class.java)
+        project.pluginManager.apply(ApplicationPlugin::class.java)
     }
 
     private fun registerRepositories(project: Project) {
