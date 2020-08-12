@@ -12,6 +12,7 @@
  */
 package org.web3j.openapi.gradle.plugin
 
+import com.github.jengelman.gradle.plugins.shadow.ShadowPlugin
 import org.codehaus.groovy.runtime.InvokerHelper
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -52,6 +53,7 @@ class OpenApiPlugin : Plugin<Project>, Web3jPlugin() {
         project.pluginManager.apply(JavaPlugin::class.java)
         project.pluginManager.apply(KotlinPlatformJvmPlugin::class.java)
         project.pluginManager.apply(ApplicationPlugin::class.java)
+        project.pluginManager.apply(ShadowPlugin::class.java)
     }
 
     private fun registerRepositories(project: Project) {
