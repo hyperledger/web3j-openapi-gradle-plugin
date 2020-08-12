@@ -20,7 +20,7 @@ import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.SourceTask
-import org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformJvmPlugin
 import org.web3j.gradle.plugin.Web3jExtension
 import org.web3j.gradle.plugin.Web3jPlugin
 import java.io.File
@@ -28,26 +28,30 @@ import java.nio.file.Paths
 
 class OpenApiPlugin : Plugin<Project>, Web3jPlugin() {
 
+    override fun apply(project: Project) {
+        super.apply(project)
+        registerPlugins(project)
+        registerDependencies(project)
+        registerRepositories(project)
+
+        val sourceSets: SourceSetContainer = project.convention.getPlugin(JavaPluginConvention::class.java).sourceSets
+        project.afterEvaluate { sourceSets.forEach { sourceSet -> openApiGenerationConfig(project, sourceSet) } }
+    }
+
     override fun registerExtensions(project: Project) {
         project.extensions.create(Web3jExtension.NAME, OpenApiExtension::class.java, project)
     }
 
-    override fun apply(project: Project) {
-        super.apply(project)
-        addPlugins(project)
-        addDependencies(project)
-
-        val sourceSets: SourceSetContainer = project.convention.getPlugin(JavaPluginConvention::class.java).sourceSets
-
-        project.afterEvaluate { sourceSets.forEach { sourceSet -> openApiGenerationConfig(project, sourceSet) } }
-    }
-
-    private fun addPlugins(project: Project) {
+    private fun registerPlugins(project: Project) {
         project.pluginManager.apply(JavaPlugin::class.java)
-        project.pluginManager.apply(KotlinPluginWrapper::class.java)
+        project.pluginManager.apply(KotlinPlatformJvmPlugin::class.java)
     }
 
-    private fun addDependencies(project: Project) {
+    private fun registerRepositories(project: Project) {
+        project.repositories.maven { mavenArtifactRepository -> mavenArtifactRepository.setUrl("https://dl.bintray.com/kotlin/kotlin-eap/") }
+    }
+
+    private fun registerDependencies(project: Project) {
         project.dependencies.add("api", "org.web3j.openapi:web3j-openapi-server:0.0.3.1")
         project.dependencies.add("api", "org.web3j.openapi:web3j-openapi-core:0.0.3.1")
         project.dependencies.add("implementation", "io.swagger.core.v3:swagger-annotations:2.1.2")
@@ -67,10 +71,10 @@ class OpenApiPlugin : Plugin<Project>, Web3jPlugin() {
         val openApiExtension = InvokerHelper.getProperty(project, Web3jExtension.NAME) as OpenApiExtension
 
         File(openApiExtension.generatedFilesBaseDir).deleteRecursively()
-        val projectOutputDir: File = File(openApiExtension.generatedFilesBaseDir).apply { mkdirs() }
+        val projectOutputDir: File = File("${openApiExtension.generatedFilesBaseDir}/kotlin").apply { mkdirs() }
 
         // Add source set to the project Java source sets
-        sourceSet.java.srcDir(projectOutputDir)
+        sourceSet.java.srcDir(projectOutputDir.absolutePath)
 
         val srcSetName = if (sourceSet.name == "main") ""
         else sourceSet.name.capitalize()
@@ -82,7 +86,7 @@ class OpenApiPlugin : Plugin<Project>, Web3jPlugin() {
         task.apply {
             group = "web3j"
             description = "Generates Web3j-OpenAPI project from Solidity contracts."
-            generatedFilesBaseDir = projectOutputDir.absolutePath.substringBefore("server/src/main")
+            generatedFilesBaseDir = projectOutputDir.absolutePath
             addressLength = openApiExtension.addressBitLength
             contextPath = openApiExtension.openApi.contextPath
             packageName = openApiExtension.generatedPackageName.substringBefore(".wrappers")
@@ -93,12 +97,12 @@ class OpenApiPlugin : Plugin<Project>, Web3jPlugin() {
         }
 
         val wrapperGenerationTask = project.tasks.getByName("generate${srcSetName}ContractWrappers") as SourceTask
-        val compileJava = project.tasks.getByName("compile${srcSetName}Java") as SourceTask
+        val compileKotlin = project.tasks.getByName("compile${srcSetName}Kotlin") as SourceTask
 
         task.also {
             it.dependsOn(wrapperGenerationTask)
             it.mustRunAfter(wrapperGenerationTask)
-            compileJava.dependsOn(it)
+            compileKotlin.dependsOn(it)
         }
     }
 

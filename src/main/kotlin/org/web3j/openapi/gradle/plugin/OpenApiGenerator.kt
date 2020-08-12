@@ -57,11 +57,11 @@ open class OpenApiGenerator @Inject constructor() : DefaultTask() {
         val generatorConfiguration = GeneratorConfiguration(
                 projectName,
                 packageName,
-                generatedFilesBaseDir.substringBefore("server/src/main"),
+                generatedFilesBaseDir,
                 loadContractConfigurations(contractsAbi, contractsBin),
                 addressLength,
                 contextPath,
-//                withSwaggerUi = generateSwaggerUI, FIXME: should be generated for the whole project...
+                withSwaggerUi = false, // FIXME: should be generated for the whole project...
                 withWrappers = false,
                 withBuildFiles = false
         )
