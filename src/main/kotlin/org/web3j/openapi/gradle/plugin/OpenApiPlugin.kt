@@ -13,6 +13,7 @@
 package org.web3j.openapi.gradle.plugin
 
 import com.github.jengelman.gradle.plugins.shadow.ShadowPlugin
+import io.swagger.v3.plugins.gradle.SwaggerPlugin
 import org.codehaus.groovy.runtime.InvokerHelper
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -22,6 +23,7 @@ import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.SourceTask
+import org.hidetake.gradle.swagger.generator.SwaggerGeneratorPlugin
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformJvmPlugin
 import org.web3j.gradle.plugin.Web3jExtension
 import org.web3j.gradle.plugin.Web3jPlugin
@@ -54,10 +56,13 @@ class OpenApiPlugin : Plugin<Project>, Web3jPlugin() {
         project.pluginManager.apply(KotlinPlatformJvmPlugin::class.java)
         project.pluginManager.apply(ApplicationPlugin::class.java)
         project.pluginManager.apply(ShadowPlugin::class.java)
+        project.pluginManager.apply(SwaggerGeneratorPlugin::class.java)
+        project.pluginManager.apply(SwaggerPlugin::class.java)
     }
 
     private fun registerRepositories(project: Project) {
         project.repositories.maven { mavenArtifactRepository -> mavenArtifactRepository.setUrl("https://dl.bintray.com/kotlin/kotlin-eap/") }
+        project.repositories.mavenCentral()
     }
 
     private fun registerDependencies(project: Project) {
@@ -66,6 +71,7 @@ class OpenApiPlugin : Plugin<Project>, Web3jPlugin() {
         project.dependencies.add("implementation", "io.swagger.core.v3:swagger-annotations:2.1.2")
         project.dependencies.add("implementation", "org.glassfish.jersey.media:jersey-media-json-jackson:2.31")
         project.dependencies.add("implementation", "org.glassfish.jersey.containers:jersey-container-servlet:2.31")
+        project.dependencies.add("swaggerUI", "org.webjars:swagger-ui:3.10.0")
     }
 
     /**
