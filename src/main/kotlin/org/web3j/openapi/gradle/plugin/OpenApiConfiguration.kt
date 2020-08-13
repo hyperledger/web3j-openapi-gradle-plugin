@@ -36,11 +36,4 @@ open class OpenApiConfiguration(project: Project) {
         set(value) {
             field = value.removePrefix("/")
         }
-
-    /**
-	 * Checks whether to generate the SwaggerUI for the generated project.
-	 * Set to false not to generate it.
-	 * Default : true.
-	 */
-    var generateSwaggerUI: Boolean = true
 }

@@ -108,7 +108,6 @@ class OpenApiPlugin : Plugin<Project>, Web3jPlugin() {
             projectName = openApiExtension.openApi.projectName
             contractsAbi = getContractsData(openApiExtension.openApi.contractsAbis, project)
             contractsBin = getContractsData(openApiExtension.openApi.contractsBins, project)
-            generateSwaggerUI = openApiExtension.openApi.generateSwaggerUI
         }
 
         val wrapperGenerationTask = project.tasks.getByName("generate${srcSetName}ContractWrappers") as SourceTask

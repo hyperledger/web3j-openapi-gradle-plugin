@@ -46,10 +46,6 @@ open class OpenApiGenerator @Inject constructor() : DefaultTask() {
     var addressLength = Address.DEFAULT_LENGTH / SIZE
 
     @Input
-    @Optional
-    var generateSwaggerUI = true
-
-    @Input
     lateinit var contextPath: String
 
     @TaskAction
@@ -61,7 +57,7 @@ open class OpenApiGenerator @Inject constructor() : DefaultTask() {
                 loadContractConfigurations(contractsAbi, contractsBin),
                 addressLength,
                 contextPath,
-                withSwaggerUi = false, // FIXME: should be generated for the whole project...
+                withSwaggerUi = false,
                 withWrappers = false,
                 withBuildFiles = false
         )
