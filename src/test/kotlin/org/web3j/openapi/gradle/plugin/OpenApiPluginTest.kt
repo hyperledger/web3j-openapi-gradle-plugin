@@ -32,17 +32,19 @@ class OpenApiPluginTest {
         val resource = javaClass.classLoader.getResource("solidity/StandardToken.sol")!!
         val sourceDir: File = File(resource.file).parentFile
         val projectName = "testApp"
+        val packageName = "com.test"
 
         val buildFileContent = """
 			plugins {
-                id 'java'
                 id 'org.web3j.openapi'
             }
 
-			openapi {
-				projectName = '$projectName'
-				generatedPackageName = 'com.test'
-			}
+            web3j {
+                generatedPackageName = '$packageName'
+                openapi {
+				    projectName = '$projectName'
+			    }
+            }
 
 			sourceSets {
 				main {
@@ -51,6 +53,7 @@ class OpenApiPluginTest {
 					}
 				}
 			}
+
             repositories {
                 mavenCentral()
                 maven {
@@ -79,7 +82,8 @@ class OpenApiPluginTest {
                         "generated",
                         "source",
                         "web3j",
-                        "main",
+                        "kotlin",
+                        packageName.replace(".", "/"),
                         projectName
                 ).toString()
         )
