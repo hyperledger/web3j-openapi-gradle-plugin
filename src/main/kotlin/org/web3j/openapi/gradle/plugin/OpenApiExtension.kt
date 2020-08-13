@@ -15,6 +15,7 @@ package org.web3j.openapi.gradle.plugin
 import groovy.lang.Closure
 import org.gradle.api.Project
 import org.web3j.gradle.plugin.Web3jExtension
+import java.util.*
 
 open class OpenApiExtension(
     private val project: Project
@@ -28,6 +29,8 @@ open class OpenApiExtension(
     }
 
     override fun setGeneratedPackageName(generatedPackageName: String?) {
+        if(generatedPackageName?.contains(".{0}") == true)
+            throw InvalidPropertiesFormatException("The .{0} notation is not accepted when generating an 'OpenAPI' project !")
         super.setGeneratedPackageName("$generatedPackageName.wrappers")
     }
 }
