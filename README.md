@@ -77,6 +77,7 @@ Check the [web3j-gradle-plugin](https://github.com/web3j/web3j-gradle-plugin#cod
 for the options accepted by the `web3j` DSL.
 
 The `generatedPackageName` is a `.` separated list of words. It will be converted to lower case during the generation.
+
 **The `.{0}` is not accepted in the case we are generating an `OpenAPI` project**.
 
 ## Source sets
