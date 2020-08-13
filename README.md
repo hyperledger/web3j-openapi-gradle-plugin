@@ -1,7 +1,8 @@
 web3j OpenAPI Gradle Plugin
 ============================
 
-Gradle plugin that generates [Web3j-OpenAPI](https://github.com/web3j/web3j-openapi) project from Solidity smart contracts.
+Gradle plugin that generates [Web3j-OpenAPI](https://github.com/web3j/web3j-openapi) 
+project from Solidity smart contracts.
 It smoothly integrates with your project's build lifecycle by adding specific tasks that can be also
 run independently.
 
@@ -48,55 +49,35 @@ After applying the plugin, the base directory for generated code (by default
 `$buildDir/generated/source/web3j`) will contain a directory containing the generated
 project for all the contracts specified in the configuration.
 
-### Project dependencies
+## Code generation
 
-The plugin requires the [gradle-tooling-api](https://docs.gradle.org/current/userguide/embedding.html) dependency to be declared in your project
-**in case you want to generate the `SwaggerUI`**. If that is the case, add the following dependency at the top of your `build.gradle` file :
+The `web3j` DSL allows to configure the generated code, e.g.:
 
 ```groovy
-buildscript{
-    repositories {
-        mavenCentral()
-
-        dependencies{
-            maven {
-                url 'https://repo.gradle.org/gradle/libs-releases'
-            }
-        }
+web3j {
+    generatedPackageName = 'com.mycompany'
+    generatedFilesBaseDir = "$buildDir/custom/destination"
+    excludedContracts = ['Ownable']
+    openapi {
+        projectName = "TestProject"
     }
 }
 ```
 
-## Code generation
-
-The `openapi` DSL allows to configure the generated code, e.g.:
-
-```groovy
-openapi {
-    generatedPackageName = 'com.mycompany'
-    generatedFilesBaseDir = "$buildDir/custom/destination"
-    excludedContracts = ['Ownable']
-    projectName = "TestProject"
-    generateSwaggerUI = false
-}
-```
-
-The properties accepted by the DSL are listed in the following table: 
+The properties accepted by the `openapi` DSL are listed in the following table: 
 
 |  Name                   | Type       | Default value                       | Description |
 |-------------------------|:----------:|:-----------------------------------:|-------------|
-| `generatedPackageName`  | `String`   | `${group}.openapi`                  | Generated project package name. |
-| `generatedFilesBaseDir` | `String`   | `$buildDir/generated/source/web3j`  | Generated Web3j-OpenAPI project output directory. |
-| `excludedContracts`     | `String[]` | `[]`                                | Excluded contract names from Web3j-OpenAPI generation |
-| `includedContracts`     | `String[]` | `[]`                                | Included contract names from Web3j-OpenAPI generation. Has preference over `excludedContracts`. |
-| `projectName`           | `String`   | `${rootProject.name}Api`            | Generated Web3j-OpenAPI project name. |
-| `addressBitLength`      | `int`      | `160`                               | Supported address length in bits, by default Ethereum addresses. |
+| `projectName`           | `String`   | `${rootProject.name}`               | Generated Web3j-OpenAPI project name. |
 | `contextPath`           | `String`   | `projectName`                       | Generated Web3j-OpenAPI context path `/{contextPath}/...`. |
-| `generateSwaggerUI`     | `Boolean`  | `true`                              | Generate a [SwaggerUI](https://swagger.io/tools/swagger-ui/) along with the Web3j-OpenAPI project. Don't forget to add the dependency above if you set this to true. |
 | `contractsAbis`         | `String[]` | `[]`                                | Extra contracts ABIS to use for the Web3j-OpenAPI generation |
 | `contractsBins`         | `String[]` | `[]`                                | Extra contracts BINs to use for the Web3j-OpenAPI generation |
 
+Check the [web3j-gradle-plugin](https://github.com/web3j/web3j-gradle-plugin#code-generation) 
+for the options accepted by the `web3j` DSL.
+
 The `generatedPackageName` is a `.` separated list of words. It will be converted to lower case during the generation.
+**The `.{0}` is not accepted in the case we are generating an `OpenAPI` project**.
 
 ## Source sets
 
@@ -124,9 +105,80 @@ the `contractsAbis` and `contractsBins` properties (check the table above).
 Output directories for generated Web3j-OpenAPI project
 will be added to your build automatically.
 
+### Swagger UI
+
+This plugin is able to generate a [SwaggerUI](https://github.com/swagger-api/swagger-ui) for your whole project.
+To do so, the following configurations must be done:
+
+#### Swagger-gradle-plugin configuration
+
+To configure the [Swagger-gradle-plugin](https://github.com/swagger-api/swagger-core/tree/master/modules/swagger-gradle-plugin),
+which generates an `OpenAPISpecs` file for the current project. Use the following:
+
+```groovy
+resolve {
+    outputFileName = 'openapiSpecs'
+    outputFormat = 'YAML'
+    prettyPrint = 'TRUE'
+    classpath = sourceSets.main.runtimeClasspath
+    resourcePackages = ['org.web3j.openapi', 'your.other.packages']
+    outputDir = file('src/main/resources/static')
+}
+```
+Other parameters can also be specified. Check them in, [here](https://github.com/swagger-api/swagger-core/tree/master/modules/swagger-gradle-plugin#parameters)
+
+#### Gradle-swagger-generator-plugin
+
+This plugin, [Gradle-swagger-generator-plugin](https://github.com/int128/gradle-swagger-generator-plugin), generates
+the `SwaggerUI` code. The following configuration should be done:
+
+```groovy
+swaggerSources {
+    openapi {
+        inputFile = file('src/main/resources/static/openapiSpecs.yaml')
+    }
+}
+```
+Other parameters can also be specified. Check them in, [here](https://github.com/int128/gradle-swagger-generator-plugin#task-type-generateswaggercode)
+
+#### Link everything
+
+The following tasks will provide you with a `task`, that takes the previous configuration in mind, and generates for
+you a ready to be used `SwaggerUI`
+
+```groovy
+task moveSwaggerUiToResources {
+    doLast{
+        ant.move file: "$buildDir/swagger-ui-openapi",
+                todir: "$rootDir/src/main/resources/static"
+
+        file("$rootDir/src/main/resources/static/swagger-ui")
+                .deleteDir()
+
+        file("$rootDir/src/main/resources/static/swagger-ui-openapi")
+                .renameTo(file("$rootDir/src/main/resources/static/swagger-ui"))
+    }
+}
+
+task completeSwaggerUiGeneration {
+    group = "web3j"
+    generateSwaggerUI.mustRunAfter resolve
+    generateSwaggerUIOpenapi.mustRunAfter resolve
+    moveSwaggerUiToResources.mustRunAfter generateSwaggerUI
+    dependsOn resolve, generateSwaggerUI, moveSwaggerUiToResources
+}
+```
+
+After refreshing the project, you should see a `completeSwaggerUiGeneration` task in the `web3j` group. 
+
+**This task is not part of the build process ! 
+Make sure to execute this task everytime you make changes and interested in seeing them**
+
+The `SwaggerUI` will be found on : `http://{host}:{port}/swagger-ui`
+
 ## Plugin tasks
 
-The ``Web3j-OpenAPI-gradle`` pluginadds tasks to your project build using 
+The ``Web3j-OpenAPI-gradle`` plugin adds tasks to your project build using 
 a naming convention on a per source set basis
 (i.e. `generateWeb3jOpenAPI`, `generate[SourceSet]Web3jOpenAPI`).
 

@@ -16,7 +16,7 @@ import org.gradle.api.Project
 
 open class OpenApiConfiguration(project: Project) {
     /** Generated OpenAPI project name.
-	 *  Default : "{rootProjectName}Api}"
+	 *  Default : "{rootProjectName}}"
 	 */
     var projectName: String = project.rootProject.name
 
