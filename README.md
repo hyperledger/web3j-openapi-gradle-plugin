@@ -19,9 +19,15 @@ the following to the first line of your build file:
 buildscript {
     repositories {
         mavenCentral()
+        maven {
+            url 'https://repo.gradle.org/gradle/libs-releases-local/'
+        }
+        maven {
+            url 'https://dl.bintray.com/hotkeytlt/maven'
+        }
     }
     dependencies {
-        classpath 'org.web3j:web3j-openapi-gradle-plugin:4.5.11'
+        classpath 'org.web3j.openapi:web3j-openapi-gradle-plugin:4.5.11'
     }
 }
 
