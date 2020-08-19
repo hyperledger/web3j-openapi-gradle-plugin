@@ -87,7 +87,12 @@ class OpenApiPlugin : Plugin<Project>, Web3jPlugin() {
         val openApiExtension = InvokerHelper.getProperty(project, Web3jExtension.NAME) as OpenApiExtension
 
         File(openApiExtension.generatedFilesBaseDir).deleteRecursively()
-        val projectOutputDir: File = File("${openApiExtension.generatedFilesBaseDir}/kotlin").apply { mkdirs() }
+        val projectOutputDir: File = File(
+                if (openApiExtension.generatedFilesBaseDir.startsWith("/"))
+                    "${openApiExtension.generatedFilesBaseDir}/kotlin"
+                else
+                    "${project.rootDir.absolutePath}/${openApiExtension.generatedFilesBaseDir}/kotlin"
+        ).apply { mkdirs() }
 
         // Add source set to the project Java source sets
         sourceSet.java.srcDir(projectOutputDir.absolutePath)
