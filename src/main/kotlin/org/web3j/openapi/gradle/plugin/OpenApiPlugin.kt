@@ -15,6 +15,7 @@ package org.web3j.openapi.gradle.plugin
 import com.github.jengelman.gradle.plugins.shadow.ShadowPlugin
 import io.swagger.v3.plugins.gradle.SwaggerPlugin
 import org.codehaus.groovy.runtime.InvokerHelper
+import org.gradle.api.DefaultTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.ApplicationPlugin
@@ -38,9 +39,14 @@ class OpenApiPlugin : Plugin<Project>, Web3jPlugin() {
         registerDependencies(project)
         registerRepositories(project)
         setProperties(project)
+        registerUtilsTasks(project)
 
         val sourceSets: SourceSetContainer = project.convention.getPlugin(JavaPluginConvention::class.java).sourceSets
         project.afterEvaluate { sourceSets.forEach { sourceSet -> openApiGenerationConfig(project, sourceSet) } }
+    }
+
+    private fun registerUtilsTasks(project: Project) {
+        project.tasks.create(SwaggerUiTaskCoordinator.TASK_NAME, SwaggerUiTaskCoordinator::class.java)
     }
 
     private fun setProperties(project: Project) {
@@ -118,11 +124,14 @@ class OpenApiPlugin : Plugin<Project>, Web3jPlugin() {
 
         val wrapperGenerationTask = project.tasks.getByName("generate${srcSetName}ContractWrappers") as SourceTask
         val compileKotlin = project.tasks.getByName("compile${srcSetName}Kotlin") as SourceTask
+        val completeSwaggerUiGenerator = project.tasks.getByName(SwaggerUiTaskCoordinator.TASK_NAME) as DefaultTask
 
         task.also {
             it.dependsOn(wrapperGenerationTask)
             it.mustRunAfter(wrapperGenerationTask)
             compileKotlin.dependsOn(it)
+            completeSwaggerUiGenerator.mustRunAfter(it)
+            completeSwaggerUiGenerator.dependsOn(it)
         }
     }
 
