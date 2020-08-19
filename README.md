@@ -20,9 +20,6 @@ buildscript {
     repositories {
         mavenCentral()
         maven {
-            url 'https://repo.gradle.org/gradle/libs-releases-local/'
-        }
-        maven {
             url 'https://dl.bintray.com/hotkeytlt/maven'
         }
     }
