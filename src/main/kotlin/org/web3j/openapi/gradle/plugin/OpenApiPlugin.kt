@@ -72,6 +72,7 @@ class OpenApiPlugin : Plugin<Project>, Web3jPlugin() {
         project.dependencies.add("implementation", "org.glassfish.jersey.media:jersey-media-json-jackson:2.31")
         project.dependencies.add("implementation", "org.glassfish.jersey.containers:jersey-container-servlet:2.31")
         project.dependencies.add("swaggerUI", "org.webjars:swagger-ui:3.10.0")
+        project.dependencies.add("implementation", "io.github.microutils:kotlin-logging:1.7.9")
     }
 
     /**
