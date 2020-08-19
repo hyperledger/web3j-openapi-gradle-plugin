@@ -46,6 +46,7 @@ class OpenApiPlugin : Plugin<Project>, Web3jPlugin() {
     }
 
     private fun registerUtilsTasks(project: Project) {
+        project.tasks.create(SwaggerUiMover.TASK_NAME, SwaggerUiMover::class.java)
         project.tasks.create(SwaggerUiTaskCoordinator.TASK_NAME, SwaggerUiTaskCoordinator::class.java)
     }
 

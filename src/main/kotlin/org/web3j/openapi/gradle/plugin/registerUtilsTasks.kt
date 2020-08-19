@@ -23,8 +23,8 @@ open class SwaggerUiTaskCoordinator @Inject constructor() : DefaultTask() {
         const val TASK_NAME = "generateCompleteSwaggerUi"
     }
 
-    @TaskAction
-    fun coordinateSwaggerUiTasks() {
+    init {
+        group = "web3j"
         val generateSwaggerUiTask = project.tasks.getByName("generateSwaggerUI") as DefaultTask
         val resolveTask = project.tasks.getByName("resolve") as DefaultTask
         val moveTask = project.tasks.getByName(SwaggerUiMover.TASK_NAME)
@@ -42,14 +42,9 @@ open class SwaggerUiMover @Inject constructor() : DefaultTask() {
     }
 
     @TaskAction
-    fun moveSwaggerUi(outputDir: String) {
-        doLast {
-            it.ant.invokeMethod("move",
-                    """file: "${project.buildDir.absolutePath}/swagger-ui-openapi",
-                    todir: "${project.rootDir}/src/main/resources/static"""")
-            File("${project.rootDir}/src/main/resources/static/swagger-ui").deleteRecursively()
-            File("${project.rootDir}/src/main/resources/static/swagger-ui-openapi")
-                    .renameTo(File("${project.rootDir}/src/main/resources/static/swagger-ui"))
-        }
+    fun moveSwaggerUi() {
+        File("${project.buildDir.absolutePath}/swagger-ui-openapi").copyRecursively(
+                File("${project.rootDir}/src/main/resources/static/swagger-ui"),
+                true)
     }
 }
