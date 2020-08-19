@@ -124,6 +124,7 @@ which generates an `OpenAPISpecs` file for the current project. Use the followin
 
 ```groovy
 resolve {
+    resourcePackages = ['org.web3j.openapi', '<your defined packages or <default package name (to be specified later)>']
     classpath = sourceSets.main.runtimeClasspath
     outputDir = file('src/main/resources/static')
 }
