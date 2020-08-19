@@ -124,11 +124,7 @@ which generates an `OpenAPISpecs` file for the current project. Use the followin
 
 ```groovy
 resolve {
-    outputFileName = 'openapiSpecs'
-    outputFormat = 'YAML'
-    prettyPrint = 'TRUE'
     classpath = sourceSets.main.runtimeClasspath
-    resourcePackages = ['org.web3j.openapi', 'your.other.packages']
     outputDir = file('src/main/resources/static')
 }
 ```
@@ -142,39 +138,11 @@ the `SwaggerUI` code. The following configuration should be done:
 ```groovy
 swaggerSources {
     openapi {
-        inputFile = file('src/main/resources/static/openapiSpecs.yaml')
+        inputFile = file('src/main/resources/static/openapi.json')
     }
 }
 ```
 Other parameters can also be specified. Check them in, [here](https://github.com/int128/gradle-swagger-generator-plugin#task-type-generateswaggercode)
-
-#### Link everything
-
-The following tasks will provide you with a `task`, that takes the previous configuration in mind, and generates for
-you a ready to be used `SwaggerUI`
-
-```groovy
-task moveSwaggerUiToResources {
-    doLast{
-        ant.move file: "$buildDir/swagger-ui-openapi",
-                todir: "$rootDir/src/main/resources/static"
-
-        file("$rootDir/src/main/resources/static/swagger-ui")
-                .deleteDir()
-
-        file("$rootDir/src/main/resources/static/swagger-ui-openapi")
-                .renameTo(file("$rootDir/src/main/resources/static/swagger-ui"))
-    }
-}
-
-task completeSwaggerUiGeneration {
-    group = "web3j"
-    generateSwaggerUI.mustRunAfter resolve
-    generateSwaggerUIOpenapi.mustRunAfter resolve
-    moveSwaggerUiToResources.mustRunAfter generateSwaggerUI
-    dependsOn resolve, generateSwaggerUI, moveSwaggerUiToResources
-}
-```
 
 After refreshing the project, you should see a `completeSwaggerUiGeneration` task in the `web3j` group. 
 
