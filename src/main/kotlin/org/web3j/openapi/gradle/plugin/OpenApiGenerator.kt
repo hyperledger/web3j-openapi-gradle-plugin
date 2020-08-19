@@ -66,5 +66,6 @@ open class OpenApiGenerator @Inject constructor() : DefaultTask() {
         generateOpenApi.run {
             generateAll()
         }
+        println("Web3j-OpenAPI generated successfully in : $generatedFilesBaseDir")
     }
 }
