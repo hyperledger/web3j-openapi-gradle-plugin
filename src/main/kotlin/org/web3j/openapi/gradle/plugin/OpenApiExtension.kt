@@ -33,4 +33,6 @@ open class OpenApiExtension(
             throw InvalidPropertiesFormatException("The .{0} notation is not accepted when generating an Web3j-OpenAPI project !")
         super.setGeneratedPackageName("$generatedPackageName.wrappers")
     }
+
+    override fun getDefaultGeneratedPackageName(project: Project): String = "org.web3j.openapi.wrappers"
 }

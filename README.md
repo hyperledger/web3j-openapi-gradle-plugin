@@ -81,6 +81,8 @@ for the options accepted by the `web3j` DSL.
 
 The `generatedPackageName` is a `.` separated list of words. It will be converted to lower case during the generation.
 
+The default value for the `generatePackageName` is either : `org.web3j.openapi`
+
 **The `.{0}` is not accepted in the case we are generating an `OpenAPI` project**.
 
 ## Source sets
