@@ -34,7 +34,7 @@ buildscript {
 apply plugin: 'org.web3j.openapi'
 ```
 
-### Using the plugins DSL (To be checked again)
+### Using the plugins DSL
 
 Alternatively, if you are using the more modern plugins DSL, add the following line to your 
 build file:
