@@ -123,7 +123,6 @@ class OpenApiPlugin : Plugin<Project>, Web3jPlugin() {
             addressLength = openApiExtension.addressBitLength
             contextPath = openApiExtension.openApi.contextPath
             packageName = openApiExtension.generatedPackageName.substringBefore(".wrappers")
-            projectName = openApiExtension.openApi.projectName
             contractsAbi = getContractsData(openApiExtension.openApi.contractsAbis, project)
             contractsBin = getContractsData(openApiExtension.openApi.contractsBins, project)
         }

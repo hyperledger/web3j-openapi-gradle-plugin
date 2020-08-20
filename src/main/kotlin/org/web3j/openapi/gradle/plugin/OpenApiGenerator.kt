@@ -27,9 +27,6 @@ import javax.inject.Inject
 open class OpenApiGenerator @Inject constructor() : DefaultTask() {
 
     @Input
-    lateinit var projectName: String
-
-    @Input
     var contractsBin: List<File> = emptyList()
 
     @Input
@@ -51,12 +48,12 @@ open class OpenApiGenerator @Inject constructor() : DefaultTask() {
     @TaskAction
     fun generateOpenApi() {
         val generatorConfiguration = GeneratorConfiguration(
-                projectName,
-                packageName,
-                generatedFilesBaseDir,
-                loadContractConfigurations(contractsAbi, contractsBin),
-                addressLength,
-                contextPath,
+                projectName = "",
+                packageName = packageName,
+                outputDir = generatedFilesBaseDir,
+                contracts = loadContractConfigurations(contractsAbi, contractsBin),
+                addressLength = addressLength,
+                contextPath = contextPath,
                 withSwaggerUi = false,
                 withWrappers = false,
                 withBuildFiles = false
