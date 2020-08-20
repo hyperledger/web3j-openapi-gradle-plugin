@@ -1,4 +1,4 @@
-web3j OpenAPI Gradle Plugin
+Web3j OpenAPI Gradle Plugin
 ============================
 
 Gradle plugin that generates [Web3j-OpenAPI](https://github.com/web3j/web3j-openapi) 
@@ -12,7 +12,7 @@ The minimum Gradle version to run the plugin is `5.+`.
 
 ### Using the `buildscript` convention
 
-To install the web3j Plugin using the old Gradle `buildscript` convention, you should add 
+To install the Web3j Plugin using the old Gradle `buildscript` convention, you should add 
 the following to the first line of your build file:
 
 ```groovy
