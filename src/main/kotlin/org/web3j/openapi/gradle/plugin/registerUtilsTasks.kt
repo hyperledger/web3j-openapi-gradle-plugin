@@ -17,17 +17,18 @@ import org.gradle.api.tasks.TaskAction
 import java.io.File
 import javax.inject.Inject
 
-open class SwaggerUiTaskCoordinator @Inject constructor() : DefaultTask() {
+open class SwaggerUiTaskCoordinator @Inject constructor(sourceSetName: String) : DefaultTask() {
 
     companion object {
-        const val TASK_NAME = "generateCompleteSwaggerUi"
+        const val BASE_TASK_NAME = "generate"
+        const val TRAILING_TASK_NAME = "CompleteSwaggerUi"
     }
 
     init {
         group = "web3j"
         val generateSwaggerUiTask = project.tasks.getByName("generateSwaggerUI") as DefaultTask
         val resolveTask = project.tasks.getByName("resolve") as DefaultTask
-        val moveTask = project.tasks.getByName(SwaggerUiMover.TASK_NAME)
+        val moveTask = project.tasks.getByName("${SwaggerUiMover.BASE_TASK_NAME}${sourceSetName}${SwaggerUiMover.TRAILING_TASK_NAME}")
 
         generateSwaggerUiTask.mustRunAfter(resolveTask)
         moveTask.mustRunAfter(generateSwaggerUiTask)
@@ -35,16 +36,19 @@ open class SwaggerUiTaskCoordinator @Inject constructor() : DefaultTask() {
     }
 }
 
-open class SwaggerUiMover @Inject constructor() : DefaultTask() {
+open class SwaggerUiMover @Inject constructor(
+    private val outputDirPath: String
+) : DefaultTask() {
 
     companion object {
-        const val TASK_NAME = "moveSwaggerUiToResources"
+        const val BASE_TASK_NAME = "move"
+        const val TRAILING_TASK_NAME = "SwaggerUiToResources"
     }
 
     @TaskAction
     fun moveSwaggerUi() {
         File("${project.buildDir.absolutePath}/swagger-ui-openapi").copyRecursively(
-                File("${project.rootDir}/src/main/resources/static/swagger-ui"),
+                File("$outputDirPath/static/swagger-ui"),
                 true)
     }
 }

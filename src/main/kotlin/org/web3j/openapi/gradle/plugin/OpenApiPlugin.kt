@@ -44,10 +44,23 @@ class OpenApiPlugin : Plugin<Project>, Web3jPlugin() {
         project.afterEvaluate { sourceSets.forEach { sourceSet -> openApiGenerationConfig(project, sourceSet) } }
     }
 
-    private fun registerUtilsTasks(project: Project) {
-        project.tasks.create(SwaggerUiMover.TASK_NAME, SwaggerUiMover::class.java)
-        project.tasks.create(SwaggerUiTaskCoordinator.TASK_NAME, SwaggerUiTaskCoordinator::class.java)
+    private fun registerSwaggerUtilsTasks(project: Project, resourcesOutputDir: File, sourceSetName: String) {
+        with(project.tasks) {
+            create(
+                taskNameCreator(SwaggerUiMover.BASE_TASK_NAME, SwaggerUiMover.TRAILING_TASK_NAME, sourceSetName),
+                SwaggerUiMover::class.java,
+                resourcesOutputDir.absolutePath
+            )
+            create(
+                taskNameCreator(SwaggerUiTaskCoordinator.BASE_TASK_NAME, SwaggerUiTaskCoordinator.TRAILING_TASK_NAME, sourceSetName),
+                SwaggerUiTaskCoordinator::class.java,
+                sourceSetName
+            )
+        }
     }
+
+    private fun taskNameCreator(baseName: String, trailingName: String, sourceSetName: String): String =
+        "${baseName}${sourceSetName}$trailingName"
 
     private fun setProperties(project: Project) {
         project.setProperty("mainClassName", "org.web3j.openapi.server.console.RunServerCommand")
@@ -98,19 +111,25 @@ class OpenApiPlugin : Plugin<Project>, Web3jPlugin() {
     private fun openApiGenerationConfig(project: Project, sourceSet: SourceSet) {
         val openApiExtension = InvokerHelper.getProperty(project, Web3jExtension.NAME) as OpenApiExtension
 
-        File(openApiExtension.generatedFilesBaseDir).deleteRecursively()
         val projectOutputDir: File = File(
                 if (openApiExtension.generatedFilesBaseDir.startsWith("/"))
-                    "${openApiExtension.generatedFilesBaseDir}/kotlin"
+                    openApiExtension.generatedFilesBaseDir
                 else
-                    "${project.rootDir.absolutePath}/${openApiExtension.generatedFilesBaseDir}/kotlin"
+                    "${project.rootDir.absolutePath}/${openApiExtension.generatedFilesBaseDir}"
         ).apply { mkdirs() }
+        val sourceOutputDir = File("$projectOutputDir/${sourceSet.name.decapitalize()}/kotlin").apply { mkdirs() }
+        val resourcesOutputDir = File("$projectOutputDir/${sourceSet.name.decapitalize()}/resources").apply { mkdirs() }
+
+        sourceOutputDir.deleteRecursively()
 
         // Add source set to the project Java source sets
-        sourceSet.java.srcDir(projectOutputDir.absolutePath)
+        sourceSet.java.srcDir(sourceOutputDir.absolutePath)
+        sourceSet.resources.srcDir(resourcesOutputDir.absolutePath)
 
         val srcSetName = if (sourceSet.name == "main") ""
         else sourceSet.name.capitalize()
+
+        registerSwaggerUtilsTasks(project, resourcesOutputDir, srcSetName)
 
         val generateOpenApiTaskName = "generate${srcSetName}Web3jOpenAPI"
 
@@ -119,7 +138,7 @@ class OpenApiPlugin : Plugin<Project>, Web3jPlugin() {
         task.apply {
             group = "web3j"
             description = "Generates Web3j-OpenAPI project from Solidity contracts."
-            generatedFilesBaseDir = projectOutputDir.absolutePath
+            generatedFilesBaseDir = sourceOutputDir.absolutePath
             addressLength = openApiExtension.addressBitLength
             contextPath = openApiExtension.openApi.contextPath
             packageName = openApiExtension.generatedPackageName.substringBefore(".wrappers")
@@ -129,11 +148,13 @@ class OpenApiPlugin : Plugin<Project>, Web3jPlugin() {
 
         val wrapperGenerationTask = project.tasks.getByName("generate${srcSetName}ContractWrappers") as SourceTask
         val compileKotlin = project.tasks.getByName("compile${srcSetName}Kotlin") as SourceTask
+        val processResourcesTask = project.tasks.getByName("processResources")
 
         task.also {
             it.dependsOn(wrapperGenerationTask)
             it.mustRunAfter(wrapperGenerationTask)
             compileKotlin.dependsOn(it)
+            processResourcesTask.mustRunAfter(wrapperGenerationTask)
         }
     }
 
