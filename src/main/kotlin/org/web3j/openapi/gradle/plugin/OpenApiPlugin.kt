@@ -58,12 +58,14 @@ class OpenApiPlugin : Plugin<Project>, Web3jPlugin() {
     }
 
     private fun registerPlugins(project: Project) {
-        project.pluginManager.apply(JavaPlugin::class.java)
-        project.pluginManager.apply(KotlinPlatformJvmPlugin::class.java)
-        project.pluginManager.apply(ApplicationPlugin::class.java)
-        project.pluginManager.apply(ShadowPlugin::class.java)
-        project.pluginManager.apply(SwaggerGeneratorPlugin::class.java)
-        project.pluginManager.apply(SwaggerPlugin::class.java)
+        with(project.pluginManager) {
+            apply(JavaPlugin::class.java)
+            apply(KotlinPlatformJvmPlugin::class.java)
+            apply(ApplicationPlugin::class.java)
+            apply(ShadowPlugin::class.java)
+            apply(SwaggerGeneratorPlugin::class.java)
+            apply(SwaggerPlugin::class.java)
+        }
     }
 
     // FIXME: these are not taken into consideration in the target project
@@ -74,13 +76,15 @@ class OpenApiPlugin : Plugin<Project>, Web3jPlugin() {
     }
 
     private fun registerDependencies(project: Project) {
-        project.dependencies.add("api", "org.web3j.openapi:web3j-openapi-server:0.0.3.1")
-        project.dependencies.add("api", "org.web3j.openapi:web3j-openapi-core:0.0.3.1")
-        project.dependencies.add("implementation", "io.swagger.core.v3:swagger-annotations:2.1.2")
-        project.dependencies.add("implementation", "org.glassfish.jersey.media:jersey-media-json-jackson:2.31")
-        project.dependencies.add("implementation", "org.glassfish.jersey.containers:jersey-container-servlet:2.31")
-        project.dependencies.add("swaggerUI", "org.webjars:swagger-ui:3.10.0")
-        project.dependencies.add("implementation", "io.github.microutils:kotlin-logging:1.7.9")
+        with(project.dependencies) {
+            add("api", "org.web3j.openapi:web3j-openapi-server:0.0.3.1")
+            add("api", "org.web3j.openapi:web3j-openapi-core:0.0.3.1")
+            add("implementation", "io.swagger.core.v3:swagger-annotations:2.1.2")
+            add("implementation", "org.glassfish.jersey.media:jersey-media-json-jackson:2.31")
+            add("implementation", "org.glassfish.jersey.containers:jersey-container-servlet:2.31")
+            add("swaggerUI", "org.webjars:swagger-ui:3.10.0")
+            add("implementation", "io.github.microutils:kotlin-logging:1.7.9")
+        }
     }
 
     /**
