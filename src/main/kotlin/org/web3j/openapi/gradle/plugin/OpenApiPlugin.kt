@@ -58,9 +58,6 @@ class OpenApiPlugin : Plugin<Project>, Web3jPlugin() {
         }
     }
 
-    private fun taskNameCreator(baseName: String, trailingName: String, sourceSetName: String): String =
-        "${baseName}${sourceSetName}$trailingName"
-
     private fun setProperties(project: Project) {
         project.setProperty("mainClassName", "org.web3j.openapi.server.console.RunServerCommand")
     }

@@ -52,3 +52,6 @@ open class SwaggerUiMover @Inject constructor(
                 true)
     }
 }
+
+fun taskNameCreator(baseName: String, trailingName: String, sourceSetName: String): String =
+    "${baseName}${sourceSetName}$trailingName"
