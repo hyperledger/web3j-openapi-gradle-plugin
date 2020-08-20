@@ -19,6 +19,9 @@ the following to the first line of your build file:
 buildscript {
     repositories {
         mavenCentral()
+        maven { 
+            url 'https://repo.gradle.org/gradle/libs-releases' 
+        }
         maven {
             url 'https://dl.bintray.com/hotkeytlt/maven'
         }
@@ -71,7 +74,6 @@ The properties accepted by the `openapi` DSL are listed in the following table:
 
 |  Name                   | Type       | Default value                       | Description |
 |-------------------------|:----------:|:-----------------------------------:|-------------|
-| `projectName`           | `String`   | `${rootProject.name}`               | Generated Web3j-OpenAPI project name. |
 | `contextPath`           | `String`   | `projectName`                       | Generated Web3j-OpenAPI context path `/{contextPath}/...`. |
 | `contractsAbis`         | `String[]` | `[]`                                | Extra contracts ABIS to use for the Web3j-OpenAPI generation |
 | `contractsBins`         | `String[]` | `[]`                                | Extra contracts BINs to use for the Web3j-OpenAPI generation |
@@ -123,11 +125,13 @@ which generates an `OpenAPISpecs` file for the current project. Use the followin
 
 ```groovy
 resolve {
-    resourcePackages = ['org.web3j.openapi', '<your defined packages or <default package name (to be specified later)>']
-    classpath = sourceSets.main.runtimeClasspath
-    outputDir = file('src/main/resources/static')
+    resourcePackages = ['org.web3j.openapi', '<your package names>']
+    classpath = sourceSets.<sourceSet>.runtimeClasspath
+    outputDir = file('build/resources/openapi/<sourceSet>')
 }
 ```
+if you have no idea what the `sourceSet` you are targeting is, most likely it is `main`.
+
 Other parameters can also be specified. Check them in, [here](https://github.com/swagger-api/swagger-core/tree/master/modules/swagger-gradle-plugin#parameters)
 
 #### Gradle-swagger-generator-plugin
@@ -138,10 +142,13 @@ the `SwaggerUI` code. The following configuration should be done:
 ```groovy
 swaggerSources {
     openapi {
-        inputFile = file('src/main/resources/static/openapi.json')
+        inputFile = file('build/resources/openapi/<sourceSet>/openapi.json')
     }
 }
 ```
+
+Same as above, the `sourceSet` is most likely `main` if you don't know what it is.
+
 Other parameters can also be specified. Check them in, [here](https://github.com/int128/gradle-swagger-generator-plugin#task-type-generateswaggercode)
 
 After refreshing the project, you should see a `completeSwaggerUiGeneration` task in the `web3j` group. 
