@@ -10,6 +10,8 @@ run independently.
 
 The minimum Gradle version to run the plugin is `5.+`.
 
+PS: No need to add the `kotlin plugin` to your project. It already comes with the `web3j-openapi-gradle-plugin`.
+
 ### Using the `buildscript` convention
 
 To install the Web3j Plugin using the old Gradle `buildscript` convention, you should add 
@@ -65,7 +67,7 @@ web3j {
     generatedFilesBaseDir = "$buildDir/custom/destination"
     excludedContracts = ['Ownable']
     openapi {
-        projectName = "TestProject"
+        contextPath = "api"
     }
 }
 ```
@@ -113,12 +115,12 @@ the `contractsAbis` and `contractsBins` properties (check the table above).
 Output directories for generated Web3j-OpenAPI project
 will be added to your build automatically.
 
-### Swagger UI
+## Swagger UI
 
 This plugin is able to generate a [SwaggerUI](https://github.com/swagger-api/swagger-ui) for your whole project.
 To do so, the following configurations must be done:
 
-#### Swagger-gradle-plugin configuration
+### Swagger-gradle-plugin configuration
 
 To configure the [Swagger-gradle-plugin](https://github.com/swagger-api/swagger-core/tree/master/modules/swagger-gradle-plugin),
 which generates an `OpenAPISpecs` file for the current project. Use the following:
@@ -130,11 +132,11 @@ resolve {
     outputDir = file('build/resources/openapi/<sourceSet>')
 }
 ```
-if you have no idea what the `sourceSet` you are targeting is, most likely it is `main`.
+if you have no idea what `sourceSet` you are targeting is, most likely it is `main`.
 
 Other parameters can also be specified. Check them in, [here](https://github.com/swagger-api/swagger-core/tree/master/modules/swagger-gradle-plugin#parameters)
 
-#### Gradle-swagger-generator-plugin
+### Gradle-swagger-generator-plugin
 
 This plugin, [Gradle-swagger-generator-plugin](https://github.com/int128/gradle-swagger-generator-plugin), generates
 the `SwaggerUI` code. The following configuration should be done:
@@ -151,7 +153,7 @@ Same as above, the `sourceSet` is most likely `main` if you don't know what it i
 
 Other parameters can also be specified. Check them in, [here](https://github.com/int128/gradle-swagger-generator-plugin#task-type-generateswaggercode)
 
-After refreshing the project, you should see a `completeSwaggerUiGeneration` task in the `web3j` group. 
+After refreshing the project, you should see a `complete<SourceSetName>SwaggerUiGeneration` task in the `web3j` group for every `sourceSet` defined. 
 
 **This task is not part of the build process ! 
 Make sure to execute this task everytime you make changes and interested in seeing them**
