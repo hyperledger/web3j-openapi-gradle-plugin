@@ -31,7 +31,6 @@ class OpenApiPluginTest {
     fun generateOpenApiTest() {
         val resource = javaClass.classLoader.getResource("solidity/StandardToken.sol")!!
         val sourceDir: File = File(resource.file).parentFile
-        val projectName = "testApp"
         val packageName = "com.test"
 
         val buildFileContent = """
@@ -41,9 +40,6 @@ class OpenApiPluginTest {
 
             web3j {
                 generatedPackageName = '$packageName'
-                openapi {
-				    projectName = '$projectName'
-			    }
             }
 
 			sourceSets {
@@ -59,6 +55,7 @@ class OpenApiPluginTest {
                 maven {
                     url 'https://oss.sonatype.org/content/repositories/snapshots'
                 }
+                mavenLocal()
             }
 		""".trimIndent()
 
@@ -82,9 +79,9 @@ class OpenApiPluginTest {
                         "generated",
                         "source",
                         "web3j",
+                        "main",
                         "kotlin",
-                        packageName.replace(".", "/"),
-                        projectName
+                        packageName.replace(".", "/")
                 ).toString()
         )
         assertNotNull(outputFolder.list())

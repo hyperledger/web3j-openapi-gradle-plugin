@@ -36,13 +36,13 @@ apply {
         'publish',
         'spotless',
     ].each { buildScript ->
-        download {
-            src "https://raw.githubusercontent.com/web3j/build-tools/master/gradle/$buildScript/build.gradle"
-            dest "$rootDir/gradle/$buildScript/build.gradle"
-            overwrite true
-            quiet true
-            onlyIfModified true
-        }
+        //        download {
+        //            src "https://raw.githubusercontent.com/web3j/build-tools/master/gradle/$buildScript/build.gradle"
+        //            dest "$rootDir/gradle/$buildScript/build.gradle"
+        //            overwrite true
+        //            quiet true
+        //            onlyIfModified true
+        //        }
         from("$rootDir/gradle/$buildScript/build.gradle")
     }
 }
@@ -56,6 +56,9 @@ repositories {
     }
     maven {
         url 'https://dl.bintray.com/kotlin/kotlin-eap/'
+    }
+    maven {
+        url 'https://repo.gradle.org/gradle/libs-releases'
     }
     mavenLocal()
 }
