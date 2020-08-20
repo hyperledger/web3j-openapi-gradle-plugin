@@ -38,7 +38,6 @@ class OpenApiPlugin : Plugin<Project>, Web3jPlugin() {
         registerDependencies(project)
         registerRepositories(project)
         setProperties(project)
-        registerUtilsTasks(project)
 
         val sourceSets: SourceSetContainer = project.convention.getPlugin(JavaPluginConvention::class.java).sourceSets
         project.afterEvaluate { sourceSets.forEach { sourceSet -> openApiGenerationConfig(project, sourceSet) } }
