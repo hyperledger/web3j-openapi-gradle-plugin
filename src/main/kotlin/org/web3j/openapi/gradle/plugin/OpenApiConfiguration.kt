@@ -15,10 +15,6 @@ package org.web3j.openapi.gradle.plugin
 import org.gradle.api.Project
 
 open class OpenApiConfiguration(project: Project) {
-    /** Generated OpenAPI project name.
-	 *  Default : "{rootProjectName}}"
-	 */
-    var projectName: String = project.rootProject.name
 
     /** Contracts ABIs list. Can be folders or files.  */
     var contractsAbis: List<String> = emptyList()
@@ -32,7 +28,7 @@ open class OpenApiConfiguration(project: Project) {
 	 * The resulting URIs path will be :
 	 * <code> /{contextPath}/{contractName}/... </code>
 	 */
-    var contextPath: String = projectName
+    var contextPath: String = project.rootProject.name
         set(value) {
             field = value.removePrefix("/")
         }
