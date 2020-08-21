@@ -76,7 +76,8 @@ The properties accepted by the `openapi` DSL are listed in the following table:
 
 |  Name                   | Type       | Default value                       | Description |
 |-------------------------|:----------:|:-----------------------------------:|-------------|
-| `contextPath`           | `String`   | `projectName`                       | Generated Web3j-OpenAPI context path `/{contextPath}/...`. |
+| `projectName`           | `String`   | `${rootProject.name}` or `OpenAPI`  | Generated Web3j-OpenAPI project name. |
+| `contextPath`           | `String`   | `$projectName`                       | Generated Web3j-OpenAPI context path `/{contextPath}/...`. |
 | `contractsAbis`         | `String[]` | `[]`                                | Extra contracts ABIS to use for the Web3j-OpenAPI generation |
 | `contractsBins`         | `String[]` | `[]`                                | Extra contracts BINs to use for the Web3j-OpenAPI generation |
 
