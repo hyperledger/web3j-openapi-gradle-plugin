@@ -16,6 +16,11 @@ import org.gradle.api.Project
 
 open class OpenApiConfiguration(project: Project) {
 
+    /** Generated OpenAPI project name.
+     *  Default : "{rootProjectName}" or "OpenApi"
+     */
+    var projectName: String = if (project.rootProject.name.isNotBlank()) project.rootProject.name else "OpenApi"
+
     /** Contracts ABIs list. Can be folders or files.  */
     var contractsAbis: List<String> = emptyList()
 
@@ -28,8 +33,9 @@ open class OpenApiConfiguration(project: Project) {
 	 * The resulting URIs path will be :
 	 * <code> /{contextPath}/{contractName}/... </code>
 	 */
-    var contextPath: String = project.rootProject.name
+    var contextPath: String = projectName
         set(value) {
-            field = value.removePrefix("/")
+            if (value.isNotBlank() && value.isNotEmpty())
+                field = value.removePrefix("/")
         }
 }
