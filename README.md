@@ -154,7 +154,7 @@ Same as above, the `sourceSet` is most likely `main` if you don't know what it i
 
 Other parameters can also be specified. Check them in, [here](https://github.com/int128/gradle-swagger-generator-plugin#task-type-generateswaggercode)
 
-After refreshing the project, you should see a `complete<SourceSetName>SwaggerUiGeneration` task in the `web3j` group for every `sourceSet` defined. 
+After refreshing the project, you should be able to run a `complete<SourceSetName>SwaggerUiGeneration` task in the `web3j` group for the source sets you configured. 
 
 **This task is not part of the build process ! 
 Make sure to execute this task everytime you make changes and interested in seeing them**
