@@ -113,8 +113,8 @@ class OpenApiPlugin : Plugin<Project>, Web3jPlugin() {
                 else
                     "${project.rootDir.absolutePath}/${openApiExtension.generatedFilesBaseDir}"
         ).apply { mkdirs() }
-        val sourceOutputDir = File("$projectOutputDir/${sourceSet.name.decapitalize()}/kotlin").apply { mkdirs() }
-        val resourcesOutputDir = File("$projectOutputDir/${sourceSet.name.decapitalize()}/resources").apply { mkdirs() }
+        val sourceOutputDir = File("$projectOutputDir/${sourceSet.name.decapitalize()}/kotlin")
+        val resourcesOutputDir = File("$projectOutputDir/${sourceSet.name.decapitalize()}/resources")
 
         sourceOutputDir.deleteRecursively()
 
@@ -138,8 +138,8 @@ class OpenApiPlugin : Plugin<Project>, Web3jPlugin() {
             addressLength = openApiExtension.addressBitLength
             contextPath = openApiExtension.openApi.contextPath
             packageName = openApiExtension.generatedPackageName.substringBefore(".wrappers")
-            contractsAbi = getContractsData(openApiExtension.openApi.contractsAbis, project)
-            contractsBin = getContractsData(openApiExtension.openApi.contractsBins, project)
+            contractsAbi = getContractsData(openApiExtension.openApi.contractsAbis, project, sourceSet.name)
+            contractsBin = getContractsData(openApiExtension.openApi.contractsBins, project, sourceSet.name)
             projectName = openApiExtension.openApi.projectName
         }
 
@@ -155,9 +155,9 @@ class OpenApiPlugin : Plugin<Project>, Web3jPlugin() {
         }
     }
 
-    private fun getContractsData(dataList: List<String>, project: Project): List<File> {
+    private fun getContractsData(dataList: List<String>, project: Project, sourceSetName: String): List<File> {
         return dataList.toMutableList().map { File(it) }.toMutableList().also {
-            it.add(File(Paths.get(project.buildDir.absolutePath, "resources", "main", "solidity").toString()))
+            it.add(File(Paths.get(project.buildDir.absolutePath, "resources", sourceSetName, "solidity").toString()))
         }
     }
 }

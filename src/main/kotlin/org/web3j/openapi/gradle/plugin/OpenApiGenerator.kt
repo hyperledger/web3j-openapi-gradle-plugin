@@ -50,16 +50,19 @@ open class OpenApiGenerator @Inject constructor() : DefaultTask() {
 
     @TaskAction
     fun generateOpenApi() {
+        val contractsConfig = loadContractConfigurations(contractsAbi, contractsBin)
+        if (contractsConfig.isNullOrEmpty()) return
+
         val generatorConfiguration = GeneratorConfiguration(
-                projectName = projectName,
-                packageName = packageName,
-                outputDir = generatedFilesBaseDir,
-                contracts = loadContractConfigurations(contractsAbi, contractsBin),
-                addressLength = addressLength,
-                contextPath = contextPath,
-                withSwaggerUi = false,
-                withWrappers = false,
-                withBuildFiles = false
+            projectName = projectName,
+            packageName = packageName,
+            outputDir = generatedFilesBaseDir,
+            contracts = contractsConfig,
+            addressLength = addressLength,
+            contextPath = contextPath,
+            withSwaggerUi = false,
+            withWrappers = false,
+            withBuildFiles = false
         )
 
         val generateOpenApi = GenerateOpenApi(generatorConfiguration)
