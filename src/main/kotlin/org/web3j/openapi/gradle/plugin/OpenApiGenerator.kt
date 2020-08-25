@@ -62,7 +62,9 @@ open class OpenApiGenerator @Inject constructor() : DefaultTask() {
             contextPath = contextPath,
             withSwaggerUi = false,
             withWrappers = false,
-            withBuildFiles = false
+            withGradleResources = false,
+            withCoreBuildFile = false,
+            withServerBuildFile = false
         )
 
         val generateOpenApi = GenerateOpenApi(generatorConfiguration)
