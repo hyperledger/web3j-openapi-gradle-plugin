@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformJvmPlugin
 import org.web3j.gradle.plugin.Web3jExtension
 import org.web3j.gradle.plugin.Web3jPlugin
 import java.io.File
-import java.nio.file.Paths
 
 class OpenApiPlugin : Plugin<Project>, Web3jPlugin() {
 
@@ -138,8 +137,8 @@ class OpenApiPlugin : Plugin<Project>, Web3jPlugin() {
             addressLength = openApiExtension.addressBitLength
             contextPath = openApiExtension.openApi.contextPath
             packageName = openApiExtension.generatedPackageName.substringBefore(".wrappers")
-            contractsAbi = getContractsData(openApiExtension.openApi.contractsAbis, project, sourceSet.name)
-            contractsBin = getContractsData(openApiExtension.openApi.contractsBins, project, sourceSet.name)
+            contractsAbi = getContractsData(openApiExtension.openApi.contractsAbis, sourceSet)
+            contractsBin = getContractsData(openApiExtension.openApi.contractsBins, sourceSet)
             projectName = openApiExtension.openApi.projectName
         }
 
@@ -155,9 +154,9 @@ class OpenApiPlugin : Plugin<Project>, Web3jPlugin() {
         }
     }
 
-    private fun getContractsData(dataList: List<String>, project: Project, sourceSetName: String): List<File> {
+    private fun getContractsData(dataList: List<String>, sourceSet: SourceSet): List<File> {
         return dataList.toMutableList().map { File(it) }.toMutableList().also {
-            it.add(File(Paths.get(project.buildDir.absolutePath, "resources", sourceSetName, "solidity").toString()))
+            it.add(buildOutputDir(sourceSet))
         }
     }
 }
