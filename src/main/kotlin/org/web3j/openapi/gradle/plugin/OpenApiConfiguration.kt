@@ -38,4 +38,9 @@ open class OpenApiConfiguration(project: Project) {
             if (value.isNotBlank() && value.isNotEmpty())
                 field = value.removePrefix("/")
         }
+
+    /**
+     * Whether to generate the server code or just the API interfaces
+     */
+    var generateServer: Boolean = true
 }

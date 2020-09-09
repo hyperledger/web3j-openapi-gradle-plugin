@@ -48,6 +48,9 @@ open class OpenApiGenerator @Inject constructor() : DefaultTask() {
     @Input
     lateinit var contextPath: String
 
+    @Input
+    var generateServer = true
+
     @TaskAction
     fun generateOpenApi() {
         val contractsConfig = loadContractConfigurations(contractsAbi, contractsBin)
@@ -69,7 +72,8 @@ open class OpenApiGenerator @Inject constructor() : DefaultTask() {
 
         val generateOpenApi = GenerateOpenApi(generatorConfiguration)
         generateOpenApi.run {
-            generate()
+            if (generateServer) generate()
+            else generateCore()
         }
         println("Web3j-OpenAPI generated successfully in : $generatedFilesBaseDir")
     }

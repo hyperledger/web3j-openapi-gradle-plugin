@@ -77,9 +77,10 @@ The properties accepted by the `openapi` DSL are listed in the following table:
 |  Name                   | Type       | Default value                       | Description |
 |-------------------------|:----------:|:-----------------------------------:|-------------|
 | `projectName`           | `String`   | `${rootProject.name}` or `OpenAPI`  | Generated Web3j-OpenAPI project name. |
-| `contextPath`           | `String`   | `$projectName`                       | Generated Web3j-OpenAPI context path `/{contextPath}/...`. |
+| `contextPath`           | `String`   | `$projectName`                      | Generated Web3j-OpenAPI context path `/{contextPath}/...`. |
 | `contractsAbis`         | `String[]` | `[]`                                | Extra contracts ABIS to use for the Web3j-OpenAPI generation |
 | `contractsBins`         | `String[]` | `[]`                                | Extra contracts BINs to use for the Web3j-OpenAPI generation |
+| `generateServer`        | `Boolean`  | `true`                              | Whether to generate the API implementation or only the interfaces |
 
 Check the [web3j-gradle-plugin](https://github.com/web3j/web3j-gradle-plugin#code-generation) 
 for the options accepted by the `web3j` DSL.
