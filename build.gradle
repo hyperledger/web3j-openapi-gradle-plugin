@@ -86,24 +86,24 @@ gradlePlugin {
     }
 }
 
-//pluginBundle {
-//    website = 'https://web3j.io/'
-//    vcsUrl = 'https://github.com/web3j/web3j-openapi-gradle-plugin'
-//    description = 'Gradle plugin providing tasks to generate Web3j-OpenAPI project from Solidity.'
-//    tags = [
-//        'solidity',
-//        'ethereum',
-//        'web3.js',
-//        'web3j',
-//        'openapi'
-//    ]
-//    plugins {
-//        openapi {
-//            // id is captured from java-gradle-plugin configuration
-//            displayName = project.description
-//        }
-//    }
-//}
+pluginBundle {
+    website = 'https://web3j.io/'
+    vcsUrl = 'https://github.com/web3j/web3j-openapi-gradle-plugin'
+    description = 'Gradle plugin providing tasks to generate Web3j-OpenAPI project from Solidity.'
+    tags = [
+        'solidity',
+        'ethereum',
+        'web3.js',
+        'web3j',
+        'openapi'
+    ]
+    plugins {
+        openapi {
+            // id is captured from java-gradle-plugin configuration
+            displayName = project.description
+        }
+    }
+}
 
 def generatedResources = "$buildDir/generated-resources/main"
 
