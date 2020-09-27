@@ -67,13 +67,13 @@ open class OpenApiGenerator @Inject constructor() : DefaultTask() {
             withWrappers = false,
             withGradleResources = false,
             withCoreBuildFile = false,
-            withServerBuildFile = false
+            withServerBuildFile = false,
+            withImplementations = generateServer
         )
 
         val generateOpenApi = GenerateOpenApi(generatorConfiguration)
         generateOpenApi.run {
-            if (generateServer) generate()
-            else generateCore()
+            generate()
         }
         println("Web3j-OpenAPI generated successfully in : $generatedFilesBaseDir")
     }
