@@ -21,7 +21,7 @@ open class SwaggerUiTaskCoordinator @Inject constructor(sourceSetName: String) :
 
     companion object {
         const val BASE_TASK_NAME = "generate"
-        const val TRAILING_TASK_NAME = "Web3jSwaggerUi"
+        const val TRAILING_TASK_NAME = "Web3jSwaggerUI"
     }
 
     init {
