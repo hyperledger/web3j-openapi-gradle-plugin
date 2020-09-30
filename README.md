@@ -78,9 +78,9 @@ The properties accepted by the `openapi` DSL are listed in the following table:
 |-------------------------|:----------:|:-----------------------------------:|-------------|
 | `projectName`           | `String`   | `${rootProject.name}` or `OpenAPI`  | Generated Web3j-OpenAPI project name. |
 | `contextPath`           | `String`   | `$projectName`                      | Generated Web3j-OpenAPI context path `/{contextPath}/...`. |
-| `contractsAbis`         | `String[]` | `[]`                                | Extra contracts ABIS to use for the Web3j-OpenAPI generation |
-| `contractsBins`         | `String[]` | `[]`                                | Extra contracts BINs to use for the Web3j-OpenAPI generation |
 | `generateServer`        | `Boolean`  | `true`                              | Whether to generate the API implementation or only the interfaces |
+| `contractsAbis`         | `String[]` | `[]`                                | (Not yet supported) Extra contracts ABIS to use for the Web3j-OpenAPI generation |
+| `contractsBins`         | `String[]` | `[]`                                | (Not yet supported) Extra contracts BINs to use for the Web3j-OpenAPI generation |
 
 Check the [web3j-gradle-plugin](https://github.com/web3j/web3j-gradle-plugin#code-generation) 
 for the options accepted by the `web3j` DSL.
@@ -155,7 +155,7 @@ Same as above, the `sourceSet` is most likely `main` if you don't know what it i
 
 Other parameters can also be specified. Check them in, [here](https://github.com/int128/gradle-swagger-generator-plugin#task-type-generateswaggercode)
 
-After refreshing the project, you should be able to run a `complete<SourceSetName>SwaggerUiGeneration` task in the `web3j` group for the source sets you configured. 
+After refreshing the project, you should be able to run a `generate<SourceSetName>Web3jSwaggerUI` task in the `web3j` group for the source sets you configured. 
 
 **This task is not part of the build process ! 
 Make sure to execute this task everytime you make changes and interested in seeing them**
