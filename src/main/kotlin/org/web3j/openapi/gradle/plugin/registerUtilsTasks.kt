@@ -47,8 +47,8 @@ open class SwaggerUiMover @Inject constructor(
 
     @TaskAction
     fun moveSwaggerUi() {
-        File("${project.buildDir.absolutePath}/swagger-ui-openapi").copyRecursively(
-                File("$outputDirPath/static/swagger-ui"),
+        File("${project.buildDir.absolutePath}${File.separator}swagger-ui-openapi").copyRecursively(
+                File("$outputDirPath${File.separator}static${File.separator}swagger-ui"),
                 true)
     }
 }

@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformJvmPlugin
 import org.web3j.gradle.plugin.Web3jExtension
 import org.web3j.gradle.plugin.Web3jPlugin
 import java.io.File
+import java.nio.file.Paths
 
 class OpenApiPlugin : Plugin<Project>, Web3jPlugin() {
 
@@ -107,13 +108,13 @@ class OpenApiPlugin : Plugin<Project>, Web3jPlugin() {
         val openApiExtension = InvokerHelper.getProperty(project, Web3jExtension.NAME) as OpenApiExtension
 
         val projectOutputDir: File = File(
-                if (openApiExtension.generatedFilesBaseDir.startsWith("/"))
+                if (Paths.get(openApiExtension.generatedFilesBaseDir).isAbsolute)
                     openApiExtension.generatedFilesBaseDir
                 else
-                    "${project.rootDir.absolutePath}/${openApiExtension.generatedFilesBaseDir}"
+                    "${project.rootDir.absolutePath}${File.separator}${openApiExtension.generatedFilesBaseDir}"
         ).apply { mkdirs() }
-        val sourceOutputDir = File("$projectOutputDir/${sourceSet.name.decapitalize()}/kotlin")
-        val resourcesOutputDir = File("$projectOutputDir/${sourceSet.name.decapitalize()}/resources")
+        val sourceOutputDir = File("$projectOutputDir/${sourceSet.name.decapitalize()}${File.separator}kotlin")
+        val resourcesOutputDir = File("$projectOutputDir/${sourceSet.name.decapitalize()}${File.separator}resources")
 
         sourceOutputDir.deleteRecursively()
 
