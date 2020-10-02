@@ -36,7 +36,6 @@ class OpenApiPlugin : Plugin<Project>, Web3jPlugin() {
         super.apply(project)
         registerPlugins(project)
         registerDependencies(project)
-        registerRepositories(project)
         setProperties(project)
 
         val sourceSets: SourceSetContainer = project.convention.getPlugin(JavaPluginConvention::class.java).sourceSets
@@ -75,13 +74,6 @@ class OpenApiPlugin : Plugin<Project>, Web3jPlugin() {
             apply(SwaggerGeneratorPlugin::class.java)
             apply(SwaggerPlugin::class.java)
         }
-    }
-
-    // FIXME: these are not taken into consideration in the target project
-    private fun registerRepositories(project: Project) {
-//        project.repositories.maven { mavenArtifactRepository -> mavenArtifactRepository.setUrl("https://dl.bintray.com/kotlin/kotlin-eap") }
-//        project.repositories.maven { mavenArtifactRepository -> mavenArtifactRepository.setUrl("https://dl.bintray.com/hotkeytlt/maven") }
-//        project.repositories.mavenCentral()
     }
 
     private fun registerDependencies(project: Project) {
