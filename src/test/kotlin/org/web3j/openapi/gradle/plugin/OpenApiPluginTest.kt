@@ -40,6 +40,9 @@ class OpenApiPluginTest {
 
             web3j {
                 generatedPackageName = '$packageName'
+                openapi {
+                    generateServer = true
+                }
             }
 
 			sourceSets {
@@ -55,7 +58,6 @@ class OpenApiPluginTest {
                 maven {
                     url 'https://oss.sonatype.org/content/repositories/snapshots'
                 }
-                mavenLocal()
             }
 		""".trimIndent()
 
