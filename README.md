@@ -21,15 +21,11 @@ the following to the first line of your build file:
 buildscript {
     repositories {
         mavenCentral()
-        maven { 
-            url 'https://repo.gradle.org/gradle/libs-releases' 
-        }
-        maven {
-            url 'https://dl.bintray.com/hotkeytlt/maven'
-        }
+        maven { url 'https://repo.gradle.org/gradle/libs-releases' }
+        maven { url "https://plugins.gradle.org/m2/" }
     }
     dependencies {
-        classpath 'org.web3j.openapi:web3j-openapi-gradle-plugin:4.5.11'
+        classpath 'org.web3j.openapi:web3j-openapi-gradle-plugin:4.6.4'
     }
 }
 
@@ -42,8 +38,17 @@ Alternatively, if you are using the more modern plugins DSL, add the following l
 build file:
 
 ```groovy
+pluginManagement {
+    repositories {
+        mavenLocal()
+        maven { url 'https://repo.gradle.org/gradle/libs-releases' }
+        maven { url "https://plugins.gradle.org/m2/" }
+        mavenCentral()
+    }
+}
+
 plugins {
-    id 'org.web3j.openapi' version '4.5.11'
+    id "org.web3j.openapi" version "4.6.4"
 }
 ```
 
