@@ -15,7 +15,6 @@ plugins {
 description = 'Gradle plugin providing tasks to generate Web3j-OpenAPI project from Solidity.'
 sourceCompatibility = 1.8
 
-// FIXME: change to correct versions
 ext {
     web3jOpenAPIVersion = '0.1.1'
     junitVersion = '5.5.2'
@@ -36,13 +35,13 @@ apply {
         'publish',
         'spotless',
     ].each { buildScript ->
-                download {
-                    src "https://raw.githubusercontent.com/web3j/build-tools/master/gradle/$buildScript/build.gradle"
-                    dest "$rootDir/gradle/$buildScript/build.gradle"
-                    overwrite true
-                    quiet true
-                    onlyIfModified true
-                }
+        download {
+            src "https://raw.githubusercontent.com/web3j/build-tools/master/gradle/$buildScript/build.gradle"
+            dest "$rootDir/gradle/$buildScript/build.gradle"
+            overwrite true
+            quiet true
+            onlyIfModified true
+        }
         from("$rootDir/gradle/$buildScript/build.gradle")
     }
 }
