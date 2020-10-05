@@ -30,7 +30,7 @@ import org.web3j.gradle.plugin.Web3jPlugin
 import java.io.File
 import java.nio.file.Paths
 
-class OpenApiPlugin : Plugin<Project>, Web3jPlugin() {
+class OpenApiPlugin : Web3jPlugin() {
 
     override fun apply(project: Project) {
         super.apply(project)
@@ -78,13 +78,13 @@ class OpenApiPlugin : Plugin<Project>, Web3jPlugin() {
 
     private fun registerDependencies(project: Project) {
         with(project.dependencies) {
-            add("api", "org.web3j.openapi:web3j-openapi-server:0.1.1")
-            add("api", "org.web3j.openapi:web3j-openapi-core:0.1.1")
+            add("api", "org.web3j.openapi:web3j-openapi-server:4.6.4")
+            add("api", "org.web3j.openapi:web3j-openapi-core:4.6.4")
             add("implementation", "io.swagger.core.v3:swagger-annotations:2.1.2")
             add("implementation", "org.glassfish.jersey.media:jersey-media-json-jackson:2.31")
             add("implementation", "org.glassfish.jersey.containers:jersey-container-servlet:2.31")
-            add("swaggerUI", "org.webjars:swagger-ui:3.10.0")
             add("implementation", "io.github.microutils:kotlin-logging:1.7.9")
+            add("swaggerUI", "org.webjars:swagger-ui:3.10.0")
         }
     }
 

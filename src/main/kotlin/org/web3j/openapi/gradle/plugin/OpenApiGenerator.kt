@@ -71,10 +71,7 @@ open class OpenApiGenerator @Inject constructor() : DefaultTask() {
             withImplementations = generateServer
         )
 
-        val generateOpenApi = GenerateOpenApi(generatorConfiguration)
-        generateOpenApi.run {
-            generate()
-        }
+        GenerateOpenApi(generatorConfiguration).generate()
         println("Web3j-OpenAPI generated successfully in : $generatedFilesBaseDir")
     }
 }

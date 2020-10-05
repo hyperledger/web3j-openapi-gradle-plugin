@@ -1,25 +1,24 @@
 plugins {
-    id 'org.jetbrains.kotlin.jvm' version '1.3.72'
     id 'java'
     id 'java-gradle-plugin'
     id 'idea'
     id 'jacoco'
-    id "com.diffplug.gradle.spotless" version "3.25.0"
+    id 'org.jetbrains.kotlin.jvm' version '1.4.10'
+    id 'com.diffplug.gradle.spotless' version '3.25.0'
     id 'io.codearte.nexus-staging' version '0.21.1'
-    id "de.marcphilipp.nexus-publish" version "0.4.0"
+    id 'de.marcphilipp.nexus-publish' version '0.4.0'
     id 'com.gradle.plugin-publish' version '0.10.1'
-    id "de.undercouch.download" version "4.0.0"
-    id "com.jfrog.bintray" version "1.8.4"
+    id 'de.undercouch.download' version '4.1.1'
+    id 'com.jfrog.bintray' version '1.8.4'
 }
 
 description = 'Gradle plugin providing tasks to generate Web3j-OpenAPI project from Solidity.'
 sourceCompatibility = 1.8
 
 ext {
-    web3jOpenAPIVersion = '0.1.1'
-    junitVersion = '5.5.2'
-    gradlePluginVersion = '4.6.4'
-    kotlinMultiPlat = '1.3.41'
+    web3jVersion = version
+    junitVersion = '5.7.0'
+    kotlinMultiPlat = '1.4.10'
     shadow = '5.1.0'
     swaggerGen = '2.18.1'
     swaggerPlugin = '2.1.2'
@@ -57,16 +56,16 @@ repositories {
 }
 
 dependencies {
-    implementation "org.web3j:web3j-gradle-plugin:$gradlePluginVersion"
+    implementation "org.web3j:web3j-gradle-plugin:$web3jVersion"
     implementation "org.jetbrains.kotlin.multiplatform:org.jetbrains.kotlin.multiplatform.gradle.plugin:$kotlinMultiPlat"
     implementation "com.github.jengelman.gradle.plugins:shadow:$shadow"
     implementation "gradle.plugin.org.hidetake:gradle-swagger-generator-plugin:$swaggerGen"
     implementation "io.swagger.core.v3:swagger-gradle-plugin:$swaggerPlugin"
 
-    implementation ("org.web3j:abi:$gradlePluginVersion") {
+    implementation ("org.web3j:abi:$web3jVersion") {
         exclude group: 'org.slf4j', module: 'slf4j-nop'
     }
-    implementation "org.web3j.openapi:web3j-openapi-codegen:$web3jOpenAPIVersion"
+    implementation "org.web3j.openapi:web3j-openapi-codegen:$web3jVersion"
     testImplementation "org.junit.jupiter:junit-jupiter:${junitVersion}"
 }
 
@@ -113,6 +112,7 @@ task generateVersionProperties {
         generated.text = "version=$rootProject.version"
     }
 }
+
 tasks.withType(Test) {
     reports.html.destination file("${reporting.baseDir}/${name}")
     useJUnitPlatform()
