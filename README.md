@@ -40,9 +40,9 @@ build file:
 ```groovy
 pluginManagement {
     repositories {
+        mavenCentral()
         maven { url 'https://repo.gradle.org/gradle/libs-releases' }
         maven { url "https://plugins.gradle.org/m2/" }
-        mavenCentral()
     }
 }
 
