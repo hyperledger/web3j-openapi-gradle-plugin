@@ -168,7 +168,7 @@ The `SwaggerUI` will be found on : `http://{host}:{port}/swagger-ui`, after runn
 
 ## Plugin tasks
 
-The ``Web3j-OpenAPI-gradle`` plugin adds tasks to your project build using 
+The ``Web3j-OpenAPI-gradle-plugin`` adds tasks to your project build using 
 a naming convention on a per source set basis
 (i.e. `generateWeb3jOpenAPI`, `generate[SourceSet]Web3jOpenAPI`).
 
