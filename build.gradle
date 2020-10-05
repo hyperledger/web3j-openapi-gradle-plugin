@@ -58,16 +58,18 @@ dependencies {
     implementation "gradle.plugin.org.hidetake:gradle-swagger-generator-plugin:$swaggerGen"
     implementation "io.swagger.core.v3:swagger-gradle-plugin:$swaggerPlugin"
 
-    implementation ("org.web3j:abi:$web3jVersion") {
+    implementation("org.web3j:abi:$web3jVersion") {
         exclude group: 'org.slf4j', module: 'slf4j-nop'
     }
-    implementation "org.web3j.openapi:web3j-openapi-codegen:$web3jVersion"
+    implementation("org.web3j.openapi:web3j-openapi-codegen:$web3jVersion") {
+        exclude group: 'org.slf4j', module: 'slf4j-simple'
+    }
     testImplementation "org.junit.jupiter:junit-jupiter:${junitVersion}"
 }
 
 gradlePlugin {
     plugins {
-        web3j {
+        web3jOpenApi {
             id = 'org.web3j.openapi'
             implementationClass = 'org.web3j.openapi.gradle.plugin.OpenApiPlugin'
         }
