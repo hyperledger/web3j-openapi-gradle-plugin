@@ -42,7 +42,6 @@ open class OpenApiGenerator @Inject constructor() : DefaultTask() {
     lateinit var packageName: String
 
     @Input
-    @Optional
     var addressLength = Address.DEFAULT_LENGTH / SIZE
 
     @Input
