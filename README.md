@@ -164,7 +164,7 @@ After refreshing the project, you should be able to run a `generate<SourceSetNam
 **This task is not part of the build process ! 
 Make sure to execute this task everytime you make changes and interested in seeing them**
 
-The `SwaggerUI` will be found on : `http://{host}:{port}/swagger-ui`
+The `SwaggerUI` will be found on : `http://{host}:{port}/swagger-ui`, after running the project `./gradlew run` and specifying the [Web3j-OpenAPI](https://github.com/web3j/web3j-openapi) runtime configuration.
 
 ## Plugin tasks
 
