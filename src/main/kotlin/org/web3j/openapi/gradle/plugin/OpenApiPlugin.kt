@@ -15,7 +15,6 @@ package org.web3j.openapi.gradle.plugin
 import com.github.jengelman.gradle.plugins.shadow.ShadowPlugin
 import io.swagger.v3.plugins.gradle.SwaggerPlugin
 import org.codehaus.groovy.runtime.InvokerHelper
-import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.ApplicationPlugin
 import org.gradle.api.plugins.JavaPlugin

@@ -14,7 +14,6 @@ package org.web3j.openapi.gradle.plugin
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.web3j.abi.datatypes.Address
 import org.web3j.openapi.codegen.GenerateOpenApi
