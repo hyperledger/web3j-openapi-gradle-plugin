@@ -18,6 +18,7 @@ import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.web3j.abi.datatypes.Address
 import org.web3j.openapi.codegen.GenerateOpenApi
+import org.web3j.openapi.codegen.config.ContractConfiguration
 import org.web3j.openapi.codegen.config.GeneratorConfiguration
 import org.web3j.openapi.codegen.utils.GeneratorUtils.loadContractConfigurations
 import java.io.File
@@ -51,9 +52,15 @@ open class OpenApiGenerator @Inject constructor() : DefaultTask() {
     @Input
     var generateServer = true
 
+    @Input
+    var includedContracts: List<String> = emptyList()
+
+    @Input
+    var excludedContracts: List<String> = emptyList()
+
     @TaskAction
     fun generateOpenApi() {
-        val contractsConfig = loadContractConfigurations(contractsAbi, contractsBin)
+        val contractsConfig = excludeContracts(includeContracts(loadContractConfigurations(contractsAbi, contractsBin)))
         if (contractsConfig.isNullOrEmpty()) return
 
         val generatorConfiguration = GeneratorConfiguration(
@@ -76,5 +83,21 @@ open class OpenApiGenerator @Inject constructor() : DefaultTask() {
             generate()
         }
         println("Web3j-OpenAPI generated successfully in : $generatedFilesBaseDir")
+    }
+
+    private fun excludeContracts(contracts: List<ContractConfiguration>): List<ContractConfiguration> {
+        return if (excludedContracts.isEmpty()) {
+            contracts
+        } else {
+            contracts.filter { contractConfig -> !excludedContracts.contains(contractConfig.contractDetails.contractName) }
+        }
+    }
+
+    private fun includeContracts(contracts: List<ContractConfiguration>): List<ContractConfiguration> {
+        return if (includedContracts.isEmpty()) {
+            contracts
+        } else {
+            contracts.filter { contractConfig -> includedContracts.contains(contractConfig.contractDetails.contractName) }
+        }
     }
 }

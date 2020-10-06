@@ -132,6 +132,8 @@ class OpenApiPlugin : Plugin<Project>, Web3jPlugin() {
             packageName = openApiExtension.generatedPackageName.substringBefore(".wrappers")
             contractsAbi = getContractsData(openApiExtension.openApi.contractsAbis, sourceSet)
             contractsBin = getContractsData(openApiExtension.openApi.contractsBins, sourceSet)
+            includedContracts = openApiExtension.includedContracts
+            excludedContracts = openApiExtension.excludedContracts
             projectName = openApiExtension.openApi.projectName
             generateServer = openApiExtension.openApi.generateServer
         }
