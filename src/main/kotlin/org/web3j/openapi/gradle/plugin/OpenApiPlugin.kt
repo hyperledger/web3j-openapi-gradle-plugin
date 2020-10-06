@@ -15,7 +15,6 @@ package org.web3j.openapi.gradle.plugin
 import com.github.jengelman.gradle.plugins.shadow.ShadowPlugin
 import io.swagger.v3.plugins.gradle.SwaggerPlugin
 import org.codehaus.groovy.runtime.InvokerHelper
-import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.plugins.ApplicationPlugin
 import org.gradle.api.plugins.JavaPlugin
@@ -30,7 +29,7 @@ import org.web3j.gradle.plugin.Web3jPlugin
 import java.io.File
 import java.nio.file.Paths
 
-class OpenApiPlugin : Plugin<Project>, Web3jPlugin() {
+class OpenApiPlugin : Web3jPlugin() {
 
     override fun apply(project: Project) {
         super.apply(project)
@@ -78,13 +77,13 @@ class OpenApiPlugin : Plugin<Project>, Web3jPlugin() {
 
     private fun registerDependencies(project: Project) {
         with(project.dependencies) {
-            add("api", "org.web3j.openapi:web3j-openapi-server:0.1.1")
-            add("api", "org.web3j.openapi:web3j-openapi-core:0.1.1")
+            add("api", "org.web3j.openapi:web3j-openapi-server:$projectVersion")
+            add("api", "org.web3j.openapi:web3j-openapi-core:$projectVersion")
             add("implementation", "io.swagger.core.v3:swagger-annotations:2.1.2")
-            add("implementation", "org.glassfish.jersey.media:jersey-media-json-jackson:2.31")
-            add("implementation", "org.glassfish.jersey.containers:jersey-container-servlet:2.31")
+            add("implementation", "org.glassfish.jersey.media:jersey-media-json-jackson:2.32")
+            add("implementation", "org.glassfish.jersey.containers:jersey-container-servlet:2.32")
+            add("implementation", "io.github.microutils:kotlin-logging:1.7.10")
             add("swaggerUI", "org.webjars:swagger-ui:3.10.0")
-            add("implementation", "io.github.microutils:kotlin-logging:1.7.9")
         }
     }
 

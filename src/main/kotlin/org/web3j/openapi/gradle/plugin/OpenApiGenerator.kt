@@ -14,7 +14,6 @@ package org.web3j.openapi.gradle.plugin
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.TaskAction
 import org.web3j.abi.datatypes.Address
 import org.web3j.openapi.codegen.GenerateOpenApi
@@ -43,7 +42,6 @@ open class OpenApiGenerator @Inject constructor() : DefaultTask() {
     lateinit var packageName: String
 
     @Input
-    @Optional
     var addressLength = Address.DEFAULT_LENGTH / SIZE
 
     @Input
@@ -78,10 +76,7 @@ open class OpenApiGenerator @Inject constructor() : DefaultTask() {
             withImplementations = generateServer
         )
 
-        val generateOpenApi = GenerateOpenApi(generatorConfiguration)
-        generateOpenApi.run {
-            generate()
-        }
+        GenerateOpenApi(generatorConfiguration).generate()
         println("Web3j-OpenAPI generated successfully in : $generatedFilesBaseDir")
     }
 

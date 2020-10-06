@@ -21,7 +21,7 @@ open class OpenApiExtension(
     private val project: Project
 ) : Web3jExtension(project) {
 
-    var openApi: OpenApiConfiguration = OpenApiConfiguration(project = project)
+    var openApi: OpenApiConfiguration = OpenApiConfiguration(project)
 
     fun openapi(closure: Closure<*>): OpenApiConfiguration {
         project.configure(openApi, closure)

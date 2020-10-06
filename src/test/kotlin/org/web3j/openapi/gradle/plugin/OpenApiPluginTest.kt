@@ -37,14 +37,9 @@ class OpenApiPluginTest {
 			plugins {
                 id 'org.web3j.openapi'
             }
-
             web3j {
                 generatedPackageName = '$packageName'
-                openapi {
-                    generateServer = true
-                }
             }
-
 			sourceSets {
 				main {
 					solidity {
@@ -52,8 +47,8 @@ class OpenApiPluginTest {
 					}
 				}
 			}
-
             repositories {
+                mavenLocal()
                 mavenCentral()
                 maven {
                     url 'https://oss.sonatype.org/content/repositories/snapshots'
