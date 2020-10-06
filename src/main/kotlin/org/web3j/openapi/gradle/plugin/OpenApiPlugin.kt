@@ -80,9 +80,9 @@ class OpenApiPlugin : Web3jPlugin() {
             add("api", "org.web3j.openapi:web3j-openapi-server:$projectVersion")
             add("api", "org.web3j.openapi:web3j-openapi-core:$projectVersion")
             add("implementation", "io.swagger.core.v3:swagger-annotations:2.1.2")
-            add("implementation", "org.glassfish.jersey.media:jersey-media-json-jackson:2.31")
-            add("implementation", "org.glassfish.jersey.containers:jersey-container-servlet:2.31")
-            add("implementation", "io.github.microutils:kotlin-logging:1.7.9")
+            add("implementation", "org.glassfish.jersey.media:jersey-media-json-jackson:2.32")
+            add("implementation", "org.glassfish.jersey.containers:jersey-container-servlet:2.32")
+            add("implementation", "io.github.microutils:kotlin-logging:1.7.10")
             add("swaggerUI", "org.webjars:swagger-ui:3.10.0")
         }
     }
