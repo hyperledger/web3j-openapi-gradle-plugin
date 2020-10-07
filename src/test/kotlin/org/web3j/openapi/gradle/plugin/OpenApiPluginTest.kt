@@ -15,12 +15,11 @@ package org.web3j.openapi.gradle.plugin
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome.SUCCESS
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
 import java.io.File
-import java.nio.file.Paths
 
 class OpenApiPluginTest {
 
@@ -31,7 +30,7 @@ class OpenApiPluginTest {
     fun generateOpenApiTest() {
         val resource = javaClass.classLoader.getResource("solidity/StandardToken.sol")!!
         val sourceDir: File = File(resource.file).parentFile
-        val packageName = "com.test"
+        val packageName = "org.web3j.test"
 
         val buildFileContent = """
 			plugins {
@@ -39,6 +38,7 @@ class OpenApiPluginTest {
             }
             web3j {
                 generatedPackageName = '$packageName'
+                openapi { projectName = 'test' }
             }
 			sourceSets {
 				main {
@@ -66,19 +66,12 @@ class OpenApiPluginTest {
         assertNotNull(buildResult.task(":generateWeb3jOpenApi"))
         assertEquals(SUCCESS, buildResult.task(":generateWeb3jOpenApi")!!.outcome)
 
-        val outputFolder = File(
-                Paths.get(
-                        testProjectDir.absolutePath,
-                        "build",
-                        "generated",
-                        "source",
-                        "web3j",
-                        "main",
-                        "kotlin",
-                        packageName.replace(".", "/")
-                ).toString()
-        )
-        assertNotNull(outputFolder.list())
-        assertNotEquals(0, outputFolder.list()!!.size)
+        val outputDir = File(testProjectDir, "build/generated/source/web3j/main/kotlin")
+        val generatedApi = File(outputDir, "org/web3j/test/core/TestApi.kt")
+        assertTrue(generatedApi.exists())
+
+//        val upToDate = gradleRunner.build()
+//        assertNotNull(upToDate.task(":generateWeb3jOpenApi"))
+//        assertEquals(UP_TO_DATE, upToDate.task(":generateWeb3jOpenApi")!!.outcome)
     }
 }
