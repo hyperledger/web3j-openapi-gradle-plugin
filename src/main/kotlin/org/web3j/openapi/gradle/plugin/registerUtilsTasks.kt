@@ -14,6 +14,7 @@ package org.web3j.openapi.gradle.plugin
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
+import org.web3j.gradle.plugin.Web3jExtension
 import java.io.File
 import javax.inject.Inject
 
@@ -25,7 +26,7 @@ open class SwaggerUiTaskCoordinator @Inject constructor(sourceSetName: String) :
     }
 
     init {
-        group = "web3j"
+        group = Web3jExtension.NAME
         val generateSwaggerUiTask = project.tasks.getByName("generateSwaggerUI") as DefaultTask
         val resolveTask = project.tasks.getByName("resolve") as DefaultTask
         val moveTask = project.tasks.getByName("${SwaggerUiMover.BASE_TASK_NAME}${sourceSetName}${SwaggerUiMover.TRAILING_TASK_NAME}")

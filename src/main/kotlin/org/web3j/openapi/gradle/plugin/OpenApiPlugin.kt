@@ -123,7 +123,7 @@ class OpenApiPlugin : Web3jPlugin() {
         val task: GenerateOpenApi = project.tasks.create(generateOpenApiTaskName, GenerateOpenApi::class.java)
 
         task.apply {
-            group = "web3j"
+            group = Web3jExtension.NAME
             description = "Generates Web3j-OpenAPI project from Solidity contracts."
             source = buildSourceDirectorySet(project, sourceSet)
             outputs.dir(sourceOutputDir)
