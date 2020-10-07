@@ -58,7 +58,7 @@ Then run your project containing Solidity contracts:
 ```
 
 After applying the plugin, the base directory for generated code (by default 
-`$buildDir/generated/source/web3j`) will contain a directory containing the generated
+`$buildDir/generated/sources/web3j`) will contain a directory containing the generated
 project for all the contracts specified in the configuration.
 
 ## Code generation

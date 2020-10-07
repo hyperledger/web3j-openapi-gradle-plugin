@@ -66,7 +66,7 @@ class OpenApiPluginTest {
         assertNotNull(buildResult.task(":generateWeb3jOpenApi"))
         assertEquals(SUCCESS, buildResult.task(":generateWeb3jOpenApi")!!.outcome)
 
-        val outputDir = File(testProjectDir, "build/generated/source/web3j/main/kotlin")
+        val outputDir = File(testProjectDir, "build/generated/sources/web3j/main/kotlin")
         val generatedApi = File(outputDir, "org/web3j/test/core/TestApi.kt")
         assertTrue(generatedApi.exists())
 
