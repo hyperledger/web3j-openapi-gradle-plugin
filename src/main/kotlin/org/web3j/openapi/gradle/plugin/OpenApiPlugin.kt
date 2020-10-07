@@ -118,9 +118,9 @@ class OpenApiPlugin : Web3jPlugin() {
 
         registerSwaggerUtilsTasks(project, resourcesOutputDir, srcSetName)
 
-        val generateOpenApiTaskName = "generate${srcSetName}Web3jOpenAPI"
+        val generateOpenApiTaskName = "generate${srcSetName}Web3jOpenApi"
 
-        val task: OpenApiGenerator = project.tasks.create(generateOpenApiTaskName, OpenApiGenerator::class.java)
+        val task: GenerateOpenApi = project.tasks.create(generateOpenApiTaskName, GenerateOpenApi::class.java)
 
         task.apply {
             group = "web3j"
