@@ -14,11 +14,12 @@ package org.web3j.openapi.gradle.plugin
 
 import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.SourceTask
 import org.gradle.api.tasks.TaskAction
 
 import org.web3j.abi.datatypes.Address
-import org.web3j.openapi.codegen.GenerateOpenApi
+import org.web3j.openapi.codegen.OpenApiGenerator
 import org.web3j.openapi.codegen.config.ContractConfiguration
 import org.web3j.openapi.codegen.config.GeneratorConfiguration
 import org.web3j.openapi.codegen.utils.GeneratorUtils.loadContractConfigurations
@@ -26,7 +27,7 @@ import java.lang.Byte.SIZE
 import javax.inject.Inject
 
 @CacheableTask
-open class OpenApiGenerator @Inject constructor() : SourceTask() {
+open class GenerateOpenApi @Inject constructor() : SourceTask() {
 
     @Input
     lateinit var projectName: String
@@ -41,15 +42,19 @@ open class OpenApiGenerator @Inject constructor() : SourceTask() {
     var addressLength = Address.DEFAULT_LENGTH / SIZE
 
     @Input
+    @Optional
     lateinit var contextPath: String
 
     @Input
+    @Optional
     var generateServer = true
 
     @Input
+    @Optional
     var includedContracts: List<String> = emptyList()
 
     @Input
+    @Optional
     var excludedContracts: List<String> = emptyList()
 
     @TaskAction
@@ -72,16 +77,16 @@ open class OpenApiGenerator @Inject constructor() : SourceTask() {
             withServerBuildFile = false,
             withImplementations = generateServer
         )
-
-        GenerateOpenApi(generatorConfiguration).generate()
-        println("Web3j-OpenAPI generated successfully in : $generatedFilesBaseDir")
+        OpenApiGenerator(generatorConfiguration).generate()
     }
 
     private fun excludeContracts(contracts: List<ContractConfiguration>): List<ContractConfiguration> {
         return if (excludedContracts.isEmpty()) {
             contracts
         } else {
-            contracts.filter { contractConfig -> !excludedContracts.contains(contractConfig.contractDetails.contractName) }
+            contracts.filter {
+                !excludedContracts.contains(it.contractDetails.contractName)
+            }
         }
     }
 
@@ -89,7 +94,9 @@ open class OpenApiGenerator @Inject constructor() : SourceTask() {
         return if (includedContracts.isEmpty()) {
             contracts
         } else {
-            contracts.filter { contractConfig -> includedContracts.contains(contractConfig.contractDetails.contractName) }
+            contracts.filter {
+                includedContracts.contains(it.contractDetails.contractName)
+            }
         }
     }
 }

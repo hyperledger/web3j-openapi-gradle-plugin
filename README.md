@@ -83,8 +83,6 @@ The properties accepted by the `openapi` DSL are listed in the following table:
 | `projectName`           | `String`   | `${rootProject.name}` or `OpenAPI`  | Generated Web3j-OpenAPI project name. |
 | `contextPath`           | `String`   | `$projectName`                      | Generated Web3j-OpenAPI context path `/{contextPath}/...`. |
 | `generateServer`        | `Boolean`  | `true`                              | Whether to generate the API implementation or only the interfaces |
-| `contractsAbis`         | `String[]` | `[]`                                | (Not yet supported) Extra contracts ABIS to use for the Web3j-OpenAPI generation |
-| `contractsBins`         | `String[]` | `[]`                                | (Not yet supported) Extra contracts BINs to use for the Web3j-OpenAPI generation |
 
 Check the [web3j-gradle-plugin](https://github.com/web3j/web3j-gradle-plugin#code-generation) 
 for the options accepted by the `web3j` DSL.
@@ -115,15 +113,12 @@ sourceSets {
 Check the [Solidity Plugin](https://github.com/web3j/solidity-gradle-plugin)
 documentation to configure the smart contracts source code directories.
 
-Also, you can add more `ABIs` and `BINs` to the generation via 
-the `contractsAbis` and `contractsBins` properties (check the table above).
-
 Output directories for generated Web3j-OpenAPI project
 will be added to your build automatically.
 
 ## Swagger UI
 
-This plugin is able to generate a [SwaggerUI](https://github.com/swagger-api/swagger-ui) for your whole project.
+This plugin is able to generate a [Swagger UI](https://github.com/swagger-api/swagger-ui) for your whole project.
 To do so, the following configurations must be done:
 
 ### Swagger-gradle-plugin configuration
@@ -142,10 +137,10 @@ if you have no idea what `sourceSet` you are targeting is, most likely it is `ma
 
 Other parameters can also be specified. Check them in, [here](https://github.com/swagger-api/swagger-core/tree/master/modules/swagger-gradle-plugin#parameters)
 
-### Gradle-swagger-generator-plugin
+### Swagger generator Gradle plugin
 
-This plugin, [Gradle-swagger-generator-plugin](https://github.com/int128/gradle-swagger-generator-plugin), generates
-the `SwaggerUI` code. The following configuration should be done:
+This [plugin](https://github.com/int128/gradle-swagger-generator-plugin) generates the Swagger UI code.
+The following configuration should be done:
 
 ```groovy
 swaggerSources {
@@ -157,20 +152,20 @@ swaggerSources {
 
 Same as above, the `sourceSet` is most likely `main` if you don't know what it is.
 
-Other parameters can also be specified. Check them in, [here](https://github.com/int128/gradle-swagger-generator-plugin#task-type-generateswaggercode)
+Other parameters can also be specified. You can check them [here](https://github.com/int128/gradle-swagger-generator-plugin#task-type-generateswaggercode).
 
-After refreshing the project, you should be able to run a `generate<SourceSetName>Web3jSwaggerUI` task in the `web3j` group for the source sets you configured. 
+After refreshing the project, you should be able to run a `generate<SourceSetName>Web3jSwaggerUi` task in the `web3j` group for the source sets you configured. 
 
 **This task is not part of the build process ! 
 Make sure to execute this task everytime you make changes and interested in seeing them**
 
-The `SwaggerUI` will be found on : `http://{host}:{port}/swagger-ui`, after running the project `./gradlew run` and specifying the [Web3j-OpenAPI](https://github.com/web3j/web3j-openapi) runtime configuration.
+The Swagger UI page will be found on : `http://{host}:{port}/swagger-ui`, after running the project `./gradlew run` and specifying the [Web3j-OpenAPI](https://github.com/web3j/web3j-openapi) runtime configuration.
 
 ## Plugin tasks
 
 The ``Web3j-OpenAPI-gradle-plugin`` adds tasks to your project build using 
 a naming convention on a per source set basis
-(i.e. `generateWeb3jOpenAPI`, `generate[SourceSet]Web3jOpenAPI`).
+(i.e. `generateWeb3jOpenApi`, `generate[SourceSet]Web3jOpenApi`).
 
 To obtain a list and description of all added tasks, run the command:
 
