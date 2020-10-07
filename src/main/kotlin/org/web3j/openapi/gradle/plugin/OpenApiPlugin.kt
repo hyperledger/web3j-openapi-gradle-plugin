@@ -125,12 +125,11 @@ class OpenApiPlugin : Web3jPlugin() {
         task.apply {
             group = "web3j"
             description = "Generates Web3j-OpenAPI project from Solidity contracts."
+            source = buildSourceDirectorySet(project, sourceSet)
             generatedFilesBaseDir = sourceOutputDir.absolutePath
             addressLength = openApiExtension.addressBitLength
             contextPath = openApiExtension.openApi.contextPath
             packageName = openApiExtension.generatedPackageName.substringBefore(".wrappers")
-            contractsAbi = getContractsData(openApiExtension.openApi.contractsAbis, sourceSet)
-            contractsBin = getContractsData(openApiExtension.openApi.contractsBins, sourceSet)
             includedContracts = openApiExtension.includedContracts
             excludedContracts = openApiExtension.excludedContracts
             projectName = openApiExtension.openApi.projectName
@@ -146,12 +145,6 @@ class OpenApiPlugin : Web3jPlugin() {
             it.mustRunAfter(wrapperGenerationTask)
             compileKotlin.dependsOn(it)
             processResourcesTask.mustRunAfter(wrapperGenerationTask)
-        }
-    }
-
-    private fun getContractsData(dataList: List<String>, sourceSet: SourceSet): List<File> {
-        return dataList.toMutableList().map { File(it) }.toMutableList().also {
-            it.add(buildOutputDir(sourceSet))
         }
     }
 }

@@ -12,28 +12,24 @@
  */
 package org.web3j.openapi.gradle.plugin
 
-import org.gradle.api.DefaultTask
+import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.SourceTask
 import org.gradle.api.tasks.TaskAction
+
 import org.web3j.abi.datatypes.Address
 import org.web3j.openapi.codegen.GenerateOpenApi
 import org.web3j.openapi.codegen.config.ContractConfiguration
 import org.web3j.openapi.codegen.config.GeneratorConfiguration
 import org.web3j.openapi.codegen.utils.GeneratorUtils.loadContractConfigurations
-import java.io.File
 import java.lang.Byte.SIZE
 import javax.inject.Inject
 
-open class OpenApiGenerator @Inject constructor() : DefaultTask() {
+@CacheableTask
+open class OpenApiGenerator @Inject constructor() : SourceTask() {
 
     @Input
     lateinit var projectName: String
-
-    @Input
-    var contractsBin: List<File> = emptyList()
-
-    @Input
-    var contractsAbi: List<File> = emptyList()
 
     @Input
     lateinit var generatedFilesBaseDir: String
@@ -58,14 +54,15 @@ open class OpenApiGenerator @Inject constructor() : DefaultTask() {
 
     @TaskAction
     fun generateOpenApi() {
-        val contractsConfig = excludeContracts(includeContracts(loadContractConfigurations(contractsAbi, contractsBin)))
+        val contractsConfig = loadContractConfigurations(source.files.toList(), emptyList())
+
         if (contractsConfig.isNullOrEmpty()) return
 
         val generatorConfiguration = GeneratorConfiguration(
             projectName = projectName,
             packageName = packageName,
             outputDir = generatedFilesBaseDir,
-            contracts = contractsConfig,
+            contracts = excludeContracts(includeContracts(contractsConfig)),
             addressLength = addressLength,
             contextPath = contextPath,
             withSwaggerUi = false,
