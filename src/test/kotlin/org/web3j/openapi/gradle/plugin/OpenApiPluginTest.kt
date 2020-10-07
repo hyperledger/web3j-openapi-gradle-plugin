@@ -50,9 +50,6 @@ class OpenApiPluginTest {
             repositories {
                 mavenLocal()
                 mavenCentral()
-                maven {
-                    url 'https://oss.sonatype.org/content/repositories/snapshots'
-                }
             }
 		""".trimIndent()
 
@@ -66,8 +63,8 @@ class OpenApiPluginTest {
                 .forwardOutput()
 
         val buildResult = gradleRunner.build()
-        assertNotNull(buildResult.task(":generateWeb3jOpenAPI"))
-        assertEquals(SUCCESS, buildResult.task(":generateWeb3jOpenAPI")!!.outcome)
+        assertNotNull(buildResult.task(":generateWeb3jOpenApi"))
+        assertEquals(SUCCESS, buildResult.task(":generateWeb3jOpenApi")!!.outcome)
 
         val outputFolder = File(
                 Paths.get(

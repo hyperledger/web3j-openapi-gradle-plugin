@@ -21,12 +21,6 @@ open class OpenApiConfiguration(project: Project) {
      */
     var projectName: String = if (project.rootProject.name.isNotBlank()) project.rootProject.name else "OpenApi"
 
-    /** Contracts ABIs list. Can be folders or files.  */
-    var contractsAbis: List<String> = emptyList()
-
-    /** Contracts BINs list. Can be folders or files.  */
-    var contractsBins: List<String> = emptyList()
-
     /**
 	 * Context path for the generated OpenAPI path.
 	 *
