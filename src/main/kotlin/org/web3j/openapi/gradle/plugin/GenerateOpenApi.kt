@@ -23,7 +23,6 @@ import org.web3j.openapi.codegen.OpenApiGenerator
 import org.web3j.openapi.codegen.config.ContractConfiguration
 import org.web3j.openapi.codegen.config.GeneratorConfiguration
 import org.web3j.openapi.codegen.utils.GeneratorUtils.loadContractConfigurations
-import java.lang.Byte.SIZE
 import javax.inject.Inject
 
 @CacheableTask
@@ -33,13 +32,11 @@ open class GenerateOpenApi @Inject constructor() : SourceTask() {
     lateinit var projectName: String
 
     @Input
-    lateinit var generatedFilesBaseDir: String
-
-    @Input
     lateinit var packageName: String
 
     @Input
-    var addressLength = Address.DEFAULT_LENGTH / SIZE
+    @Optional
+    var addressLength = Address.DEFAULT_LENGTH / Byte.SIZE_BITS
 
     @Input
     @Optional
@@ -66,7 +63,7 @@ open class GenerateOpenApi @Inject constructor() : SourceTask() {
         val generatorConfiguration = GeneratorConfiguration(
             projectName = projectName,
             packageName = packageName,
-            outputDir = generatedFilesBaseDir,
+            outputDir = outputs.files.singleFile.absolutePath,
             contracts = excludeContracts(includeContracts(contractsConfig)),
             addressLength = addressLength,
             contextPath = contextPath,

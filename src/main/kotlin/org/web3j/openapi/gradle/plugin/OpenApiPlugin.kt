@@ -126,7 +126,7 @@ class OpenApiPlugin : Web3jPlugin() {
             group = "web3j"
             description = "Generates Web3j-OpenAPI project from Solidity contracts."
             source = buildSourceDirectorySet(project, sourceSet)
-            generatedFilesBaseDir = sourceOutputDir.absolutePath
+            outputs.dir(sourceOutputDir)
             addressLength = openApiExtension.addressBitLength
             contextPath = openApiExtension.openApi.contextPath
             packageName = openApiExtension.generatedPackageName.substringBefore(".wrappers")
