@@ -35,7 +35,6 @@ open class GenerateOpenApi @Inject constructor() : SourceTask() {
     lateinit var packageName: String
 
     @Input
-    @Optional
     var addressLength = Address.DEFAULT_LENGTH / Byte.SIZE_BITS
 
     @Input
@@ -43,7 +42,6 @@ open class GenerateOpenApi @Inject constructor() : SourceTask() {
     lateinit var contextPath: String
 
     @Input
-    @Optional
     var generateServer = true
 
     @Input
