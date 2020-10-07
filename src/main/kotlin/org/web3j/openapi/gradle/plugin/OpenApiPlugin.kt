@@ -142,7 +142,6 @@ class OpenApiPlugin : Web3jPlugin() {
 
         task.also {
             it.dependsOn(wrapperGenerationTask)
-            it.mustRunAfter(wrapperGenerationTask)
             compileKotlin.dependsOn(it)
             processResourcesTask.mustRunAfter(wrapperGenerationTask)
         }
