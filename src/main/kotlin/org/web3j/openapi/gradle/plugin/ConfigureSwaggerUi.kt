@@ -18,41 +18,24 @@ import org.web3j.gradle.plugin.Web3jExtension
 import java.io.File
 import javax.inject.Inject
 
-open class SwaggerUiTaskCoordinator @Inject constructor(sourceSetName: String) : DefaultTask() {
-
-    companion object {
-        const val BASE_TASK_NAME = "generate"
-        const val TRAILING_TASK_NAME = "Web3jSwaggerUi"
-    }
+open class ConfigureSwaggerUi @Inject constructor(
+    private val outputDirPath: String
+) : DefaultTask() {
 
     init {
         group = Web3jExtension.NAME
         val generateSwaggerUiTask = project.tasks.getByName("generateSwaggerUI") as DefaultTask
         val resolveTask = project.tasks.getByName("resolve") as DefaultTask
-        val moveTask = project.tasks.getByName("${SwaggerUiMover.BASE_TASK_NAME}${sourceSetName}${SwaggerUiMover.TRAILING_TASK_NAME}")
 
         generateSwaggerUiTask.mustRunAfter(resolveTask)
-        moveTask.mustRunAfter(generateSwaggerUiTask)
-        this.dependsOn(resolveTask, generateSwaggerUiTask, moveTask)
-    }
-}
-
-open class SwaggerUiMover @Inject constructor(
-    private val outputDirPath: String
-) : DefaultTask() {
-
-    companion object {
-        const val BASE_TASK_NAME = "move"
-        const val TRAILING_TASK_NAME = "SwaggerUiToResources"
+        this.dependsOn(resolveTask, generateSwaggerUiTask)
     }
 
     @TaskAction
     fun moveSwaggerUi() {
+        // FIXME Cleanup paths
         File("${project.buildDir.absolutePath}${File.separator}swagger-ui-openapi").copyRecursively(
-                File("$outputDirPath${File.separator}static${File.separator}swagger-ui"),
-                true)
+            File("$outputDirPath${File.separator}static${File.separator}swagger-ui"),
+            true)
     }
 }
-
-fun taskNameCreator(baseName: String, trailingName: String, sourceSetName: String): String =
-    "${baseName}${sourceSetName}$trailingName"
