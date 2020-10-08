@@ -21,7 +21,6 @@ import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceSetContainer
-import org.gradle.api.tasks.SourceTask
 import org.hidetake.gradle.swagger.generator.SwaggerGeneratorPlugin
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformJvmPlugin
 import org.web3j.gradle.plugin.Web3jExtension
@@ -43,12 +42,12 @@ class OpenApiPlugin : Web3jPlugin() {
 
     private fun registerSwaggerUtilsTasks(project: Project, resourcesOutputDir: File, sourceSetName: String) {
         with(project.tasks) {
-            create(
+            register(
                 taskNameCreator(SwaggerUiMover.BASE_TASK_NAME, SwaggerUiMover.TRAILING_TASK_NAME, sourceSetName),
                 SwaggerUiMover::class.java,
                 resourcesOutputDir.absolutePath
             )
-            create(
+            register(
                 taskNameCreator(SwaggerUiTaskCoordinator.BASE_TASK_NAME, SwaggerUiTaskCoordinator.TRAILING_TASK_NAME, sourceSetName),
                 SwaggerUiTaskCoordinator::class.java,
                 sourceSetName
@@ -117,31 +116,30 @@ class OpenApiPlugin : Web3jPlugin() {
 
         registerSwaggerUtilsTasks(project, resourcesOutputDir, srcSetName)
 
+        val wrapperGenerationTask = project.tasks.named("generate${srcSetName}ContractWrappers")
+        val compileKotlin = project.tasks.named("compile${srcSetName}Kotlin")
+        val processResourcesTask = project.tasks.named("processResources")
+
         val generateOpenApiTaskName = "generate${srcSetName}Web3jOpenApi"
-        val task: GenerateOpenApi = project.tasks.create(generateOpenApiTaskName, GenerateOpenApi::class.java)
-
-        task.apply {
-            group = Web3jExtension.NAME
-            description = "Generates Web3j-OpenAPI project from Solidity contracts."
-            source = buildSourceDirectorySet(project, sourceSet)
-            outputs.dir(sourceOutputDir)
-            addressLength = openApiExtension.addressBitLength
-            contextPath = openApiExtension.openApi.contextPath
-            packageName = openApiExtension.generatedPackageName.substringBefore(".wrappers")
-            includedContracts = openApiExtension.includedContracts
-            excludedContracts = openApiExtension.excludedContracts
-            projectName = openApiExtension.openApi.projectName
-            generateServer = openApiExtension.openApi.generateServer
-        }
-
-        val wrapperGenerationTask = project.tasks.getByName("generate${srcSetName}ContractWrappers") as SourceTask
-        val compileKotlin = project.tasks.getByName("compile${srcSetName}Kotlin") as SourceTask
-        val processResourcesTask = project.tasks.getByName("processResources")
-
-        task.also {
+        val taskProvider = project.tasks.register(generateOpenApiTaskName, GenerateOpenApi::class.java) {
+            it.group = Web3jExtension.NAME
+            it.description = "Generates Web3j-OpenAPI project from Solidity contracts."
+            it.source = buildSourceDirectorySet(project, sourceSet)
+            it.outputs.dir(sourceOutputDir)
+            it.addressLength = openApiExtension.addressBitLength
+            it.contextPath = openApiExtension.openApi.contextPath
+            it.packageName = openApiExtension.generatedPackageName.substringBefore(".wrappers")
+            it.includedContracts = openApiExtension.includedContracts
+            it.excludedContracts = openApiExtension.excludedContracts
+            it.projectName = openApiExtension.openApi.projectName
+            it.generateServer = openApiExtension.openApi.generateServer
             it.dependsOn(wrapperGenerationTask)
-            compileKotlin.dependsOn(it)
-            processResourcesTask.mustRunAfter(wrapperGenerationTask)
+        }
+        compileKotlin.configure {
+            it.dependsOn(taskProvider)
+        }
+        processResourcesTask.configure {
+            it.mustRunAfter(wrapperGenerationTask)
         }
     }
 }
