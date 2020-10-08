@@ -14,6 +14,7 @@ package org.web3j.openapi.gradle.plugin
 
 import org.gradle.testkit.runner.GradleRunner
 import org.gradle.testkit.runner.TaskOutcome.SUCCESS
+import org.gradle.testkit.runner.TaskOutcome.UP_TO_DATE
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
 import org.junit.jupiter.api.Assertions.assertTrue
@@ -70,8 +71,8 @@ class OpenApiPluginTest {
         val generatedApi = File(outputDir, "org/web3j/test/core/TestApi.kt")
         assertTrue(generatedApi.exists())
 
-//        val upToDate = gradleRunner.build()
-//        assertNotNull(upToDate.task(":generateWeb3jOpenApi"))
-//        assertEquals(UP_TO_DATE, upToDate.task(":generateWeb3jOpenApi")!!.outcome)
+        val upToDate = gradleRunner.build()
+        assertNotNull(upToDate.task(":generateWeb3jOpenApi"))
+        assertEquals(UP_TO_DATE, upToDate.task(":generateWeb3jOpenApi")!!.outcome)
     }
 }

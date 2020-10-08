@@ -98,16 +98,15 @@ class OpenApiPlugin : Web3jPlugin() {
     private fun openApiGenerationConfig(project: Project, sourceSet: SourceSet) {
         val openApiExtension = InvokerHelper.getProperty(project, Web3jExtension.NAME) as OpenApiExtension
 
-        val projectOutputDir: File = File(
-                if (Paths.get(openApiExtension.generatedFilesBaseDir).isAbsolute)
-                    openApiExtension.generatedFilesBaseDir
-                else
-                    "${project.rootDir.absolutePath}${File.separator}${openApiExtension.generatedFilesBaseDir}"
-        ).apply { mkdirs() }
-        val sourceOutputDir = File("$projectOutputDir/${sourceSet.name.decapitalize()}${File.separator}kotlin")
-        val resourcesOutputDir = File("$projectOutputDir/${sourceSet.name.decapitalize()}${File.separator}resources")
+        val basePath = Paths.get(openApiExtension.generatedFilesBaseDir)
+        val projectOutputDir = if (basePath.isAbsolute) {
+            openApiExtension.generatedFilesBaseDir
+        } else {
+            project.rootDir.toPath().resolve(basePath).toAbsolutePath().toString()
+        }
 
-        sourceOutputDir.deleteRecursively()
+        val sourceOutputDir = Paths.get(projectOutputDir, sourceSet.name, "kotlin").toFile()
+        val resourcesOutputDir = Paths.get(projectOutputDir, sourceSet.name, "resources").toFile()
 
         // Add source set to the project Java source sets
         sourceSet.java.srcDir(sourceOutputDir.absolutePath)
@@ -119,7 +118,6 @@ class OpenApiPlugin : Web3jPlugin() {
         registerSwaggerUtilsTasks(project, resourcesOutputDir, srcSetName)
 
         val generateOpenApiTaskName = "generate${srcSetName}Web3jOpenApi"
-
         val task: GenerateOpenApi = project.tasks.create(generateOpenApiTaskName, GenerateOpenApi::class.java)
 
         task.apply {
