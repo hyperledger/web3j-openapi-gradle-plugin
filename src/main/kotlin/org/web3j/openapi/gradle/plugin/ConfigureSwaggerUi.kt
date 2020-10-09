@@ -15,7 +15,7 @@ package org.web3j.openapi.gradle.plugin
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
 import org.web3j.gradle.plugin.Web3jExtension
-import java.io.File
+import java.nio.file.Paths
 import javax.inject.Inject
 
 open class ConfigureSwaggerUi @Inject constructor(
@@ -33,9 +33,8 @@ open class ConfigureSwaggerUi @Inject constructor(
 
     @TaskAction
     fun moveSwaggerUi() {
-        // FIXME Cleanup paths
-        File("${project.buildDir.absolutePath}${File.separator}swagger-ui-openapi").copyRecursively(
-            File("$outputDirPath${File.separator}static${File.separator}swagger-ui"),
-            true)
+        project.buildDir.toPath().resolve("swagger-ui-openapi").toFile().copyRecursively(
+            Paths.get(outputDirPath, "static", "swagger-ui").toFile(), true
+        )
     }
 }
