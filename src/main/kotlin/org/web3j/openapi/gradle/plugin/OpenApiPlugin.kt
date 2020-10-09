@@ -148,7 +148,7 @@ class OpenApiPlugin : Web3jPlugin() {
         resourcesOutputDir: File,
         generateOpenApiTask: TaskProvider<GenerateOpenApi>
     ) {
-        project.tasks.register(
+        val generateSwaggerUi = project.tasks.register(
             "generateWeb3jSwaggerUi",
             GenerateSwaggerUi::class.java
         ) {
@@ -156,10 +156,15 @@ class OpenApiPlugin : Web3jPlugin() {
             it.description = "Generates Web3j-OpenAPI Swagger UI from Solidity contracts."
             it.inputDir = File(project.buildDir, "swagger-ui-openapi")
             it.outputDir = resourcesOutputDir
-        }.configure {
+        }
+        generateSwaggerUi.configure {
             it.dependsOn(generateOpenApiTask)
         }
-        
+        // TODO
+//        project.tasks.named("run").configure {
+//            it.dependsOn(generateSwaggerUi)
+//        }
+
         val outputDir = File(project.rootDir, "build/resources/openapi/main")
 
         @Suppress("UNCHECKED_CAST")
