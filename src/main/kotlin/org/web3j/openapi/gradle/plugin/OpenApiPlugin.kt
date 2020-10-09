@@ -114,6 +114,7 @@ class OpenApiPlugin : Web3jPlugin() {
 
         val generateOpenApiTask =
             project.tasks.register("generate${sourceSetName}Web3jOpenApi", GenerateOpenApi::class.java) {
+                it.dependsOn(wrapperGeneration)
                 it.group = Web3jExtension.NAME
                 it.description = "Generates Web3j-OpenAPI project from Solidity contracts."
                 it.source = buildSourceDirectorySet(project, sourceSet)
@@ -126,7 +127,6 @@ class OpenApiPlugin : Web3jPlugin() {
                     it.excludedContracts = excludedContracts
                     it.projectName = openApi.projectName
                     it.generateServer = openApi.generateServer
-                    it.dependsOn(wrapperGeneration)
                 }
             }
         compileKotlin.configure {
