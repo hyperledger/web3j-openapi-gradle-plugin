@@ -107,7 +107,7 @@ class OpenApiPlugin : Web3jPlugin() {
         sourceSet: SourceSet,
         sourceOutputDir: File
     ): TaskProvider<GenerateOpenApi> {
-        val sourceSetName = if (sourceSet.name == "main") "" else sourceSet.name.capitalize()
+        val sourceSetName = sourceSet.displayName.capitalize()
         val wrapperGeneration = project.tasks.named("generate${sourceSetName}ContractWrappers")
         val compileKotlin = project.tasks.named("compile${sourceSetName}Kotlin")
         val processResources = project.tasks.named("processResources")
@@ -116,7 +116,11 @@ class OpenApiPlugin : Web3jPlugin() {
             project.tasks.register("generate${sourceSetName}Web3jOpenApi", GenerateOpenApi::class.java) {
                 it.dependsOn(wrapperGeneration)
                 it.group = Web3jExtension.NAME
-                it.description = "Generates Web3j-OpenAPI classes from Solidity contracts."
+                it.description = "Generates${
+                    if (sourceSet.displayName.isNotEmpty())
+                        " ${sourceSet.displayName}"
+                    else ""
+                } Web3j-OpenAPI classes from Solidity contracts."
                 it.source = buildSourceDirectorySet(project, sourceSet)
                 it.outputs.dir(sourceOutputDir)
                 with(project.openApiExtension) {
@@ -176,4 +180,7 @@ class OpenApiPlugin : Web3jPlugin() {
     
     private val OpenApiExtension.packageName: String
         get() = generatedPackageName.substringBefore(".wrappers")
+
+    private val SourceSet.displayName: String
+        get() = if (name == "main") "" else name
 }
