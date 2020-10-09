@@ -27,24 +27,23 @@ class OpenApiPluginTest {
     @TempDir
     lateinit var testProjectDir: File
 
-    @Test
-    fun generateOpenApiTest() {
+    private val sourceDir: File by lazy {
         val resource = javaClass.classLoader.getResource("solidity/StandardToken.sol")!!
-        val sourceDir: File = File(resource.file).parentFile
-        val packageName = "org.web3j.test"
+        File(resource.file).parentFile
+    }
 
-        val buildFileContent = """
+    private val buildFileContent = """
 			plugins {
                 id 'org.web3j.openapi'
             }
             web3j {
-                generatedPackageName = '$packageName'
+                generatedPackageName = 'org.web3j.test'
                 openapi { projectName = 'test' }
             }
 			sourceSets {
 				main {
 					solidity {
-						srcDir {'${sourceDir.absolutePath}'}
+						srcDir { '${sourceDir.absolutePath}' }
 					}
 				}
 			}
@@ -54,8 +53,12 @@ class OpenApiPluginTest {
             }
 		""".trimIndent()
 
-        val buildFile: File = File(testProjectDir, "build.gradle").apply { createNewFile() }
-        buildFile.writeText(buildFileContent)
+    @Test
+    fun generateOpenApi() {
+        File(testProjectDir, "build.gradle").apply {
+            createNewFile()
+            writeText(buildFileContent)
+        }
 
         val gradleRunner = GradleRunner.create()
                 .withProjectDir(testProjectDir)
@@ -74,5 +77,33 @@ class OpenApiPluginTest {
         val upToDate = gradleRunner.build()
         assertNotNull(upToDate.task(":generateWeb3jOpenApi"))
         assertEquals(UP_TO_DATE, upToDate.task(":generateWeb3jOpenApi")!!.outcome)
+    }
+
+    @Test
+    fun generateSwaggerUi() {
+        File(testProjectDir, "build.gradle").apply {
+            createNewFile()
+            writeText(buildFileContent)
+        }
+
+        val gradleRunner = GradleRunner.create()
+            .withProjectDir(testProjectDir)
+            .withArguments("generateWeb3jSwaggerUi")
+            .withPluginClasspath()
+            .withDebug(true)
+            .forwardOutput()
+
+        val buildResult = gradleRunner.build()
+        assertNotNull(buildResult.task(":generateWeb3jOpenApi"))
+        assertEquals(SUCCESS, buildResult.task(":generateWeb3jOpenApi")!!.outcome)
+        assertNotNull(buildResult.task(":generateWeb3jSwaggerUi"))
+        assertEquals(SUCCESS, buildResult.task(":generateWeb3jSwaggerUi")!!.outcome)
+
+        val outputDir = File(testProjectDir, "build/swagger-ui-openapi")
+        assertTrue(outputDir.exists())
+
+        val upToDate = gradleRunner.build()
+        assertNotNull(upToDate.task(":generateWeb3jSwaggerUi"))
+        assertEquals(UP_TO_DATE, upToDate.task(":generateWeb3jSwaggerUi")!!.outcome)
     }
 }

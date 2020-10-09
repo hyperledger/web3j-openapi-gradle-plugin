@@ -153,6 +153,7 @@ class OpenApiPlugin : Web3jPlugin() {
             GenerateSwaggerUi::class.java,
             resourcesOutputDir.absolutePath
         ).configure {
+            it.group = Web3jExtension.NAME
             it.description = "Generates Web3j-OpenAPI Swagger UI from Solidity contracts."
             it.dependsOn(generateOpenApiTask)
         }
@@ -176,7 +177,7 @@ class OpenApiPlugin : Web3jPlugin() {
 
     private val Project.openApiExtension: OpenApiExtension
         get() = InvokerHelper.getProperty(project, Web3jExtension.NAME) as OpenApiExtension
-    
+
     private val OpenApiExtension.packageName: String
         get() = generatedPackageName.substringBefore(".wrappers")
 

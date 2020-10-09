@@ -14,7 +14,6 @@ package org.web3j.openapi.gradle.plugin
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
-import org.web3j.gradle.plugin.Web3jExtension
 import java.nio.file.Paths
 import javax.inject.Inject
 
@@ -23,12 +22,11 @@ open class GenerateSwaggerUi @Inject constructor(
 ) : DefaultTask() {
 
     init {
-        group = Web3jExtension.NAME
-        val generateSwaggerUiTask = project.tasks.getByName("generateSwaggerUI")
+        val generateSwaggerOpenApiUi = project.tasks.getByName("generateSwaggerUIOpenapi")
         val resolveTask = project.tasks.getByName("resolve")
 
-        generateSwaggerUiTask.mustRunAfter(resolveTask)
-        this.dependsOn(resolveTask, generateSwaggerUiTask)
+        generateSwaggerOpenApiUi.dependsOn(resolveTask)
+        this.dependsOn(generateSwaggerOpenApiUi)
     }
 
     @TaskAction
