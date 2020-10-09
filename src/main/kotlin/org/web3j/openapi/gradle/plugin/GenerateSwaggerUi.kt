@@ -13,13 +13,18 @@
 package org.web3j.openapi.gradle.plugin
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.tasks.InputDirectory
+import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
-import java.nio.file.Paths
-import javax.inject.Inject
+import java.io.File
 
-open class GenerateSwaggerUi @Inject constructor(
-    private val outputDirPath: String
-) : DefaultTask() {
+open class GenerateSwaggerUi : DefaultTask() {
+
+    @InputDirectory
+    lateinit var inputDir: File
+
+    @OutputDirectory
+    lateinit var outputDir: File
 
     init {
         val generateSwaggerOpenApiUi = project.tasks.getByName("generateSwaggerUIOpenapi")
@@ -31,8 +36,12 @@ open class GenerateSwaggerUi @Inject constructor(
 
     @TaskAction
     fun moveSwaggerUi() {
-        project.buildDir.toPath().resolve("swagger-ui-openapi").toFile().copyRecursively(
-            Paths.get(outputDirPath, "static", "swagger-ui").toFile(), true
+        inputDir.copyRecursively(
+            outputDir.toPath()
+                .resolve("static")
+                .resolve("swagger-ui")
+                .toFile(),
+            true
         )
     }
 }
