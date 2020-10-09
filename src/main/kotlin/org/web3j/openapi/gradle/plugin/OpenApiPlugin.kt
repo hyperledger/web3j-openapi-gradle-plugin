@@ -84,11 +84,9 @@ class OpenApiPlugin : Web3jPlugin() {
      * </code>.
      */
     private fun configure(project: Project, sourceSet: SourceSet) {
-        val openApiExtension = InvokerHelper.getProperty(project, Web3jExtension.NAME) as OpenApiExtension
-
-        val basePath = Paths.get(openApiExtension.generatedFilesBaseDir)
+        val basePath = Paths.get(project.openApiExtension.generatedFilesBaseDir)
         val projectOutputDir = if (basePath.isAbsolute) {
-            openApiExtension.generatedFilesBaseDir
+            project.openApiExtension.generatedFilesBaseDir
         } else {
             project.rootDir.toPath().resolve(basePath).toAbsolutePath().toString()
         }
@@ -100,15 +98,14 @@ class OpenApiPlugin : Web3jPlugin() {
         sourceSet.java.srcDir(sourceOutputDir.absolutePath)
         sourceSet.resources.srcDir(resourcesOutputDir.absolutePath)
 
-        val generateOpenApiTask = buildOpenApiTask(project, sourceSet, sourceOutputDir, openApiExtension)
+        val generateOpenApiTask = buildOpenApiTask(project, sourceSet, sourceOutputDir)
         if (sourceSet.name == "main") configureSwaggerUi(project, sourceSet, resourcesOutputDir, generateOpenApiTask)
     }
 
     private fun buildOpenApiTask(
         project: Project,
         sourceSet: SourceSet,
-        sourceOutputDir: File,
-        openApiExtension: OpenApiExtension
+        sourceOutputDir: File
     ): TaskProvider<GenerateOpenApi> {
         val sourceSetName = if (sourceSet.name == "main") "" else sourceSet.name.capitalize()
         val wrapperGeneration = project.tasks.named("generate${sourceSetName}ContractWrappers")
@@ -121,14 +118,16 @@ class OpenApiPlugin : Web3jPlugin() {
                 it.description = "Generates Web3j-OpenAPI project from Solidity contracts."
                 it.source = buildSourceDirectorySet(project, sourceSet)
                 it.outputs.dir(sourceOutputDir)
-                it.addressLength = openApiExtension.addressBitLength
-                it.contextPath = openApiExtension.openApi.contextPath
-                it.packageName = openApiExtension.generatedPackageName.substringBefore(".wrappers")
-                it.includedContracts = openApiExtension.includedContracts
-                it.excludedContracts = openApiExtension.excludedContracts
-                it.projectName = openApiExtension.openApi.projectName
-                it.generateServer = openApiExtension.openApi.generateServer
-                it.dependsOn(wrapperGeneration)
+                with(project.openApiExtension) {
+                    it.addressLength = addressBitLength
+                    it.contextPath = openApi.contextPath
+                    it.packageName = generatedPackageName.substringBefore(".wrappers")
+                    it.includedContracts = includedContracts
+                    it.excludedContracts = excludedContracts
+                    it.projectName = openApi.projectName
+                    it.generateServer = openApi.generateServer
+                    it.dependsOn(wrapperGeneration)
+                }
             }
         compileKotlin.configure {
             it.dependsOn(generateOpenApiTask)
@@ -165,9 +164,12 @@ class OpenApiPlugin : Web3jPlugin() {
 
         // Configure resolve task from Swagger plugin
         project.tasks.named("resolve", ResolveTask::class.java).configure {
-            it.resourcePackages = setOf()
+            it.resourcePackages = setOf(project.openApiExtension.generatedPackageName)
             it.classpath = sourceSet.runtimeClasspath
             it.outputDir = outputDir
         }
     }
+
+    private val Project.openApiExtension: OpenApiExtension
+        get() = InvokerHelper.getProperty(project, Web3jExtension.NAME) as OpenApiExtension
 }
