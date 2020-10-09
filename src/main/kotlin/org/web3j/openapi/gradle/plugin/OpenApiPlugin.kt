@@ -148,10 +148,9 @@ class OpenApiPlugin : Web3jPlugin() {
         resourcesOutputDir: File,
         generateOpenApiTask: TaskProvider<GenerateOpenApi>
     ) {
-        // Create task fro Swagger UI generation
         project.tasks.register(
             "generateWeb3jSwaggerUi",
-            ConfigureSwaggerUi::class.java,
+            GenerateSwaggerUi::class.java,
             resourcesOutputDir.absolutePath
         ).configure {
             it.description = "Generates Web3j-OpenAPI Swagger UI from Solidity contracts."
@@ -161,13 +160,13 @@ class OpenApiPlugin : Web3jPlugin() {
         val outputDir = File("build/resources/openapi/main")
 
         @Suppress("UNCHECKED_CAST")
-        // Configure resolve task from Swagger generator plugin
+        // Configure Swagger sources from SwaggerGeneratorPlugin
         (project.extensions.findByName("swaggerSources") as FactoryNamedDomainObjectContainer<SwaggerSource>).apply {
             add(SwaggerSource("openapi"))
             getByName("openapi").setInputFile(File(outputDir, "openapi.json"))
         }
 
-        // Configure resolve task from Swagger plugin
+        // Configure resolve task from SwaggerPlugin
         project.tasks.named("resolve", ResolveTask::class.java).configure {
             it.resourcePackages = setOf(project.openApiExtension.packageName)
             it.classpath = sourceSet.runtimeClasspath
