@@ -116,7 +116,7 @@ class OpenApiPlugin : Web3jPlugin() {
             project.tasks.register("generate${sourceSetName}Web3jOpenApi", GenerateOpenApi::class.java) {
                 it.dependsOn(wrapperGeneration)
                 it.group = Web3jExtension.NAME
-                it.description = "Generates Web3j-OpenAPI project from Solidity contracts."
+                it.description = "Generates Web3j-OpenAPI classes from Solidity contracts."
                 it.source = buildSourceDirectorySet(project, sourceSet)
                 it.outputs.dir(sourceOutputDir)
                 with(project.openApiExtension) {
@@ -150,6 +150,7 @@ class OpenApiPlugin : Web3jPlugin() {
             ConfigureSwaggerUi::class.java,
             resourcesOutputDir.absolutePath
         ).configure {
+            it.description = "Generates Web3j-OpenAPI Swagger UI from Solidity contracts."
             it.dependsOn(generateOpenApiTask)
         }
 
