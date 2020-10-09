@@ -14,6 +14,7 @@ package org.web3j.openapi.gradle.plugin
 
 import com.github.jengelman.gradle.plugins.shadow.ShadowPlugin
 import io.swagger.v3.plugins.gradle.SwaggerPlugin
+import io.swagger.v3.plugins.gradle.tasks.ResolveTask
 import org.codehaus.groovy.runtime.InvokerHelper
 import org.gradle.api.Project
 import org.gradle.api.internal.FactoryNamedDomainObjectContainer
@@ -22,6 +23,7 @@ import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.plugins.JavaPluginConvention
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.SourceSetContainer
+import org.gradle.api.tasks.TaskProvider
 import org.hidetake.gradle.swagger.generator.SwaggerGeneratorPlugin
 import org.hidetake.gradle.swagger.generator.SwaggerSource
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformJvmPlugin
@@ -39,7 +41,7 @@ class OpenApiPlugin : Web3jPlugin() {
         setProperties(project)
 
         val sourceSets: SourceSetContainer = project.convention.getPlugin(JavaPluginConvention::class.java).sourceSets
-        project.afterEvaluate { sourceSets.forEach { sourceSet -> openApiGenerationConfig(project, sourceSet) } }
+        project.afterEvaluate { sourceSets.forEach { sourceSet -> configure(project, sourceSet) } }
     }
 
     private fun setProperties(project: Project) {
@@ -81,7 +83,7 @@ class OpenApiPlugin : Web3jPlugin() {
      * generateWeb3jOpenApi</code>, and for <code>test</code> <code>generateTestWeb3jOpenApi
      * </code>.
      */
-    private fun openApiGenerationConfig(project: Project, sourceSet: SourceSet) {
+    private fun configure(project: Project, sourceSet: SourceSet) {
         val openApiExtension = InvokerHelper.getProperty(project, Web3jExtension.NAME) as OpenApiExtension
 
         val basePath = Paths.get(openApiExtension.generatedFilesBaseDir)
@@ -98,47 +100,74 @@ class OpenApiPlugin : Web3jPlugin() {
         sourceSet.java.srcDir(sourceOutputDir.absolutePath)
         sourceSet.resources.srcDir(resourcesOutputDir.absolutePath)
 
-        val sourceSetName = if (sourceSet.name == "main") "" else sourceSet.name.capitalize()
+        val generateOpenApiTask = buildOpenApiTask(project, sourceSet, sourceOutputDir, openApiExtension)
+        if (sourceSet.name == "main") configureSwaggerUi(project, sourceSet, resourcesOutputDir, generateOpenApiTask)
+    }
 
+    private fun buildOpenApiTask(
+        project: Project,
+        sourceSet: SourceSet,
+        sourceOutputDir: File,
+        openApiExtension: OpenApiExtension
+    ): TaskProvider<GenerateOpenApi> {
+        val sourceSetName = if (sourceSet.name == "main") "" else sourceSet.name.capitalize()
         val wrapperGeneration = project.tasks.named("generate${sourceSetName}ContractWrappers")
         val compileKotlin = project.tasks.named("compile${sourceSetName}Kotlin")
         val processResources = project.tasks.named("processResources")
 
-        val generateOpenApiTask = project.tasks.register("generate${sourceSetName}Web3jOpenApi", GenerateOpenApi::class.java) {
-            it.group = Web3jExtension.NAME
-            it.description = "Generates Web3j-OpenAPI project from Solidity contracts."
-            it.source = buildSourceDirectorySet(project, sourceSet)
-            it.outputs.dir(sourceOutputDir)
-            it.addressLength = openApiExtension.addressBitLength
-            it.contextPath = openApiExtension.openApi.contextPath
-            it.packageName = openApiExtension.generatedPackageName.substringBefore(".wrappers")
-            it.includedContracts = openApiExtension.includedContracts
-            it.excludedContracts = openApiExtension.excludedContracts
-            it.projectName = openApiExtension.openApi.projectName
-            it.generateServer = openApiExtension.openApi.generateServer
-            it.dependsOn(wrapperGeneration)
-        }
+        val generateOpenApiTask =
+            project.tasks.register("generate${sourceSetName}Web3jOpenApi", GenerateOpenApi::class.java) {
+                it.group = Web3jExtension.NAME
+                it.description = "Generates Web3j-OpenAPI project from Solidity contracts."
+                it.source = buildSourceDirectorySet(project, sourceSet)
+                it.outputs.dir(sourceOutputDir)
+                it.addressLength = openApiExtension.addressBitLength
+                it.contextPath = openApiExtension.openApi.contextPath
+                it.packageName = openApiExtension.generatedPackageName.substringBefore(".wrappers")
+                it.includedContracts = openApiExtension.includedContracts
+                it.excludedContracts = openApiExtension.excludedContracts
+                it.projectName = openApiExtension.openApi.projectName
+                it.generateServer = openApiExtension.openApi.generateServer
+                it.dependsOn(wrapperGeneration)
+            }
         compileKotlin.configure {
             it.dependsOn(generateOpenApiTask)
         }
         processResources.configure {
             it.mustRunAfter(wrapperGeneration)
         }
-        // Swagger UI only supports main
-        if (sourceSet.name == "main") {
-            val generateSwaggerUi = project.tasks.register(
-                "generateWeb3jSwaggerUi",
-                ConfigureSwaggerUi::class.java,
-                resourcesOutputDir.absolutePath
-            )
-            generateSwaggerUi.configure {
-                it.dependsOn(generateOpenApiTask)
-            }
-            @Suppress("UNCHECKED_CAST")
-            (project.extensions.findByName("swaggerSources") as FactoryNamedDomainObjectContainer<SwaggerSource>).apply {
-                add(SwaggerSource("openapi"))
-                getByName("openapi").setInputFile(File("build/resources/openapi/main/openapi.json"))
-            }   
+        return generateOpenApiTask
+    }
+
+    private fun configureSwaggerUi(
+        project: Project,
+        sourceSet: SourceSet,
+        resourcesOutputDir: File,
+        generateOpenApiTask: TaskProvider<GenerateOpenApi>
+    ) {
+        // Create task fro Swagger UI generation
+        project.tasks.register(
+            "generateWeb3jSwaggerUi",
+            ConfigureSwaggerUi::class.java,
+            resourcesOutputDir.absolutePath
+        ).configure {
+            it.dependsOn(generateOpenApiTask)
+        }
+
+        val outputDir = File("build/resources/openapi/main")
+
+        @Suppress("UNCHECKED_CAST")
+        // Configure resolve task from Swagger generator plugin
+        (project.extensions.findByName("swaggerSources") as FactoryNamedDomainObjectContainer<SwaggerSource>).apply {
+            add(SwaggerSource("openapi"))
+            getByName("openapi").setInputFile(File(outputDir, "openapi.json"))
+        }
+
+        // Configure resolve task from Swagger plugin
+        project.tasks.named("resolve", ResolveTask::class.java).configure {
+            it.resourcePackages = setOf()
+            it.classpath = sourceSet.runtimeClasspath
+            it.outputDir = outputDir
         }
     }
 }
