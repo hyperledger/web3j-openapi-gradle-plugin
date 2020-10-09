@@ -90,7 +90,6 @@ class OpenApiPluginTest {
             .withProjectDir(testProjectDir)
             .withArguments("generateWeb3jSwaggerUi")
             .withPluginClasspath()
-            .withDebug(true)
             .forwardOutput()
 
         val buildResult = gradleRunner.build()
