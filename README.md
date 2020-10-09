@@ -118,52 +118,11 @@ will be added to your build automatically.
 
 ## Swagger UI
 
-This plugin is able to generate a [Swagger UI](https://github.com/swagger-api/swagger-ui) for your whole project.
-To do so, the following configurations must be done:
-
-### Swagger-gradle-plugin configuration
-
-To configure the [Swagger-gradle-plugin](https://github.com/swagger-api/swagger-core/tree/master/modules/swagger-gradle-plugin),
-which generates an `OpenAPISpecs` file for the current project. Use the following:
-
-```groovy
-resolve {
-    resourcePackages = ['org.web3j.openapi', '<your package names>']
-    classpath = sourceSets.<sourceSet>.runtimeClasspath
-    outputDir = file('build/resources/openapi/<sourceSet>')
-}
-```
-if you have no idea what `sourceSet` you are targeting is, most likely it is `main`.
-
-Other parameters can also be specified. Check them in, [here](https://github.com/swagger-api/swagger-core/tree/master/modules/swagger-gradle-plugin#parameters)
-
-### Swagger generator Gradle plugin
-
-This [plugin](https://github.com/int128/gradle-swagger-generator-plugin) generates the Swagger UI code.
-The following configuration should be done:
-
-```groovy
-swaggerSources {
-    openapi {
-        inputFile = file('build/resources/openapi/<sourceSet>/openapi.json')
-    }
-}
-```
-
-Same as above, the `sourceSet` is most likely `main` if you don't know what it is.
-
-Other parameters can also be specified. You can check them [here](https://github.com/int128/gradle-swagger-generator-plugin#task-type-generateswaggercode).
-
-After refreshing the project, you should be able to run a `generate<SourceSetName>Web3jSwaggerUi` task in the `web3j` group for the source sets you configured. 
-
-**This task is not part of the build process ! 
-Make sure to execute this task everytime you make changes and interested in seeing them**
-
 The Swagger UI page will be found on : `http://{host}:{port}/swagger-ui`, after running the project `./gradlew run` and specifying the [Web3j-OpenAPI](https://github.com/web3j/web3j-openapi) runtime configuration.
 
 ## Plugin tasks
 
-The ``Web3j-OpenAPI-gradle-plugin`` adds tasks to your project build using 
+The `Web3j-OpenAPI` Gradle plugin adds tasks to your project build using 
 a naming convention on a per source set basis
 (i.e. `generateWeb3jOpenApi`, `generate[SourceSet]Web3jOpenApi`).
 
@@ -174,3 +133,4 @@ To obtain a list and description of all added tasks, run the command:
 ```
 
 [web3j]: https://web3j.io/
+
