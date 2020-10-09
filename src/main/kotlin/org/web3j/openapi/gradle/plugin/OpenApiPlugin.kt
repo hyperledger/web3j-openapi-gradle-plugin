@@ -122,7 +122,7 @@ class OpenApiPlugin : Web3jPlugin() {
                 with(project.openApiExtension) {
                     it.addressLength = addressBitLength
                     it.contextPath = openApi.contextPath
-                    it.packageName = generatedPackageName.substringBefore(".wrappers")
+                    it.packageName = packageName
                     it.includedContracts = includedContracts
                     it.excludedContracts = excludedContracts
                     it.projectName = openApi.projectName
@@ -164,7 +164,7 @@ class OpenApiPlugin : Web3jPlugin() {
 
         // Configure resolve task from Swagger plugin
         project.tasks.named("resolve", ResolveTask::class.java).configure {
-            it.resourcePackages = setOf(project.openApiExtension.generatedPackageName)
+            it.resourcePackages = setOf(project.openApiExtension.packageName)
             it.classpath = sourceSet.runtimeClasspath
             it.outputDir = outputDir
         }
@@ -172,4 +172,7 @@ class OpenApiPlugin : Web3jPlugin() {
 
     private val Project.openApiExtension: OpenApiExtension
         get() = InvokerHelper.getProperty(project, Web3jExtension.NAME) as OpenApiExtension
+    
+    private val OpenApiExtension.packageName: String
+        get() = generatedPackageName.substringBefore(".wrappers")
 }
