@@ -158,7 +158,7 @@ class OpenApiPlugin : Web3jPlugin() {
             it.dependsOn(generateOpenApiTask)
         }
 
-        val outputDir = File("build/resources/openapi/main")
+        val outputDir = File(project.rootDir, "build/resources/openapi/main")
 
         @Suppress("UNCHECKED_CAST")
         // Configure Swagger sources from SwaggerGeneratorPlugin

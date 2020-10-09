@@ -21,6 +21,7 @@ ext {
     swaggerGenVersion = '2.18.1'
     swaggerVersion = '2.1.2'
     jacksonVersion = '2.11.3'
+    jaxRsApi = '2.1.6'
 }
 
 apply {
@@ -66,8 +67,8 @@ dependencies {
     implementation("org.web3j.openapi:web3j-openapi-codegen:$web3jVersion") {
         exclude group: 'org.slf4j', module: 'slf4j-simple'
     }
-    testImplementation "org.junit.jupiter:junit-jupiter:${junitVersion}"
-    testImplementation 'io.swagger.core.v3:swagger-jaxrs2:2.1.2'
+    testImplementation "org.junit.jupiter:junit-jupiter:$junitVersion"
+    testImplementation "jakarta.ws.rs:jakarta.ws.rs-api:$jaxRsApi"
 
     configurations.all {
         resolutionStrategy {

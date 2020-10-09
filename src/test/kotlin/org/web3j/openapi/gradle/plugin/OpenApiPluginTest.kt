@@ -86,6 +86,11 @@ class OpenApiPluginTest {
             writeText(buildFileContent)
         }
 
+        File(testProjectDir, "build/resources/openapi/main/openapi.json").apply {
+            parentFile.mkdirs()
+            createNewFile()
+        }
+
         val gradleRunner = GradleRunner.create()
             .withProjectDir(testProjectDir)
             .withArguments("generateWeb3jSwaggerUi")
