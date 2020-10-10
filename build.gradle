@@ -91,7 +91,7 @@ dependencies {
 
 gradlePlugin {
     plugins {
-        web3jOpenApi {
+        openapi {
             id = 'org.web3j.openapi'
             implementationClass = 'org.web3j.openapi.gradle.plugin.OpenApiPlugin'
         }
