@@ -45,7 +45,7 @@ pluginManagement {
 }
 
 plugins {
-    id 'org.web3j.openapi' version "4.7.0"
+    id 'org.web3j.openapi' version '4.7.0'
 }
 ```
 
