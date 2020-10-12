@@ -19,14 +19,13 @@ the following to the first line of your build file:
 
 ```groovy
 buildscript {
-    repositories {
-        mavenCentral()
-        maven { url 'https://repo.gradle.org/gradle/libs-releases' }
-        maven { url "https://plugins.gradle.org/m2/" }
-    }
-    dependencies {
-        classpath 'org.web3j.openapi:web3j-openapi-gradle-plugin:4.6.4'
-    }
+  repositories {
+    maven { url 'https://plugins.gradle.org/m2/' }
+    maven { url 'https://repo.gradle.org/gradle/libs-releases' }
+  }
+  dependencies {
+    classpath 'org.web3j.openapi:web3j-openapi-gradle-plugin:4.7.0'
+  }
 }
 
 apply plugin: 'org.web3j.openapi'
@@ -40,14 +39,13 @@ build file:
 ```groovy
 pluginManagement {
     repositories {
-        mavenCentral()
         gradlePluginPortal()
         maven { url 'https://repo.gradle.org/gradle/libs-releases' }
     }
 }
 
 plugins {
-    id "org.web3j.openapi" version "4.6.4"
+    id 'org.web3j.openapi' version "4.7.0"
 }
 ```
 
