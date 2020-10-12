@@ -67,11 +67,25 @@ class OpenApiPlugin : Web3jPlugin() {
         with(project.dependencies) {
             add("api", "org.web3j.openapi:web3j-openapi-server:$projectVersion")
             add("api", "org.web3j.openapi:web3j-openapi-core:$projectVersion")
-            add("implementation", "io.swagger.core.v3:swagger-annotations:2.1.2")
+            add("implementation", "io.swagger.core.v3:swagger-annotations:2.1.3")
             add("implementation", "org.glassfish.jersey.media:jersey-media-json-jackson:2.32")
             add("implementation", "org.glassfish.jersey.containers:jersey-container-servlet:2.32")
             add("implementation", "io.github.microutils:kotlin-logging:1.7.10")
             add("swaggerUI", "org.webjars:swagger-ui:3.10.0")
+        }
+        project.configurations.onEach {config ->
+            config.resolutionStrategy {
+                it.force("com.fasterxml.jackson.core:jackson-core:2.11.3")
+                it.force("com.fasterxml.jackson.core:jackson-databind:2.11.3")
+                it.force("com.fasterxml.jackson.core:jackson-annotations:2.11.3")
+                it.force("com.fasterxml.jackson.module:jackson-module-jaxb-annotations:2.11.3")
+                it.force("com.fasterxml.jackson.jaxrs:jackson-jaxrs-base:2.11.3")
+                it.force("com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:2.11.3")
+                it.force("com.fasterxml.jackson.jaxrs.datatype:jackson-datatype-jsr310:2.11.3")
+                it.force("org.jetbrains.kotlin:kotlin-stdlib:1.3.72")
+                it.force("org.jetbrains.kotlin:kotlin-stdlib-common:1.3.72")
+                it.force("org.slf4j:slf4j-api:1.7.30")
+            }
         }
     }
 
@@ -160,10 +174,9 @@ class OpenApiPlugin : Web3jPlugin() {
         generateSwaggerUi.configure {
             it.dependsOn(generateOpenApiTask)
         }
-        // TODO
-//        project.tasks.named("run").configure {
-//            it.dependsOn(generateSwaggerUi)
-//        }
+        project.tasks.named("run").configure {
+            it.dependsOn(generateSwaggerUi)
+        }
 
         val outputDir = File(project.rootDir, "build/resources/openapi/main")
 
