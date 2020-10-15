@@ -73,7 +73,7 @@ class OpenApiPlugin : Web3jPlugin() {
             add("implementation", "io.github.microutils:kotlin-logging:1.7.10")
             add("swaggerUI", "org.webjars:swagger-ui:3.10.0")
         }
-        project.configurations.onEach {config ->
+        project.configurations.onEach { config ->
             config.resolutionStrategy {
                 it.force("com.fasterxml.jackson.core:jackson-core:2.11.3")
                 it.force("com.fasterxml.jackson.core:jackson-databind:2.11.3")
@@ -113,7 +113,7 @@ class OpenApiPlugin : Web3jPlugin() {
         sourceSet.resources.srcDir(resourcesOutputDir.absolutePath)
 
         val generateOpenApiTask = buildOpenApiTask(project, sourceSet, sourceOutputDir)
-        if (sourceSet.name == "main") configureSwaggerUi(project, sourceSet, resourcesOutputDir, generateOpenApiTask)
+        if (sourceSet.name == "main") configureSwaggerUi(project, sourceSet, generateOpenApiTask)
     }
 
     private fun buildOpenApiTask(
@@ -159,39 +159,40 @@ class OpenApiPlugin : Web3jPlugin() {
     private fun configureSwaggerUi(
         project: Project,
         sourceSet: SourceSet,
-        resourcesOutputDir: File,
         generateOpenApiTask: TaskProvider<GenerateOpenApi>
     ) {
         val generateSwaggerUi = project.tasks.register(
-            "generateWeb3jSwaggerUi",
-            GenerateSwaggerUi::class.java
+            "generateWeb3jSwaggerUi", GenerateSwaggerUi::class.java
         ) {
             it.group = Web3jExtension.NAME
-            it.description = "Generates Web3j-OpenAPI Swagger UI from Solidity contracts."
-            it.inputDir = File(project.buildDir, "swagger-ui-openapi")
-            it.outputDir = resourcesOutputDir
+            it.description = "Generates Swagger UI from generated Web3j-OpenAPI."
+            it.inputDir = project.buildDir.toPath().resolve("swagger-ui-openapi").toFile()
+            it.outputDir = project.buildDir.toPath().resolve("resources/main").toFile()
         }
+        // Configure our Swagger UI task to depend on
+        // Web3j Open API and Swagger UI generation
         generateSwaggerUi.configure {
             it.dependsOn(generateOpenApiTask)
         }
+        // Generate Swagger UI before running
         project.tasks.named("run").configure {
             it.dependsOn(generateSwaggerUi)
         }
 
-        val outputDir = File(project.rootDir, "build/resources/openapi/main")
+        val openApiJsonDir = File(project.rootDir, "build/resources/openapi/main")
 
         @Suppress("UNCHECKED_CAST")
         // Configure Swagger sources from SwaggerGeneratorPlugin
         (project.extensions.findByName("swaggerSources") as FactoryNamedDomainObjectContainer<SwaggerSource>).apply {
             add(SwaggerSource("openapi"))
-            getByName("openapi").setInputFile(File(outputDir, "openapi.json"))
+            getByName("openapi").setInputFile(File(openApiJsonDir, "openapi.json"))
         }
 
         // Configure resolve task from SwaggerPlugin
         project.tasks.named("resolve", ResolveTask::class.java).configure {
             it.resourcePackages = setOf(project.openApiExtension.packageName)
             it.classpath = sourceSet.runtimeClasspath
-            it.outputDir = outputDir
+            it.outputDir = openApiJsonDir
         }
     }
 
