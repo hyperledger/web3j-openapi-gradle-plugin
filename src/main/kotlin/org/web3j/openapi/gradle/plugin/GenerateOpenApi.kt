@@ -64,7 +64,6 @@ open class GenerateOpenApi @Inject constructor() : SourceTask() {
             outputDir = outputs.files.singleFile.absolutePath,
             contracts = excludeContracts(includeContracts(contractsConfig)),
             contextPath = contextPath,
-            withSwaggerUi = false,
             withImplementations = generateServer
         )
         OpenApiGenerator(generatorConfiguration).generate()
