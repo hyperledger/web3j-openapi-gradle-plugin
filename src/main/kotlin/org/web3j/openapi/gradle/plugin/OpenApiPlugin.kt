@@ -128,7 +128,6 @@ class OpenApiPlugin : Web3jPlugin() {
 
         val generateOpenApiTask =
             project.tasks.register("generate${sourceSetName}Web3jOpenApi", GenerateOpenApi::class.java) {
-                it.dependsOn(wrapperGeneration)
                 it.group = Web3jExtension.NAME
                 it.description = "Generates${
                     if (sourceSet.displayName.isNotEmpty())
@@ -147,6 +146,15 @@ class OpenApiPlugin : Web3jPlugin() {
                     it.generateServer = openApi.generateServer
                 }
             }
+        generateOpenApiTask.configure {
+            if (project.openApiExtension.openApi.generateServer) {
+                // Only generate wrappers if server generation is active
+                it.dependsOn(wrapperGeneration)
+            } else {
+                // otherwise task must depend on Solidity compilation  
+                it.dependsOn(project.tasks.named("compile${sourceSetName}Solidity"))
+            }
+        }
         compileKotlin.configure {
             it.dependsOn(generateOpenApiTask)
         }
