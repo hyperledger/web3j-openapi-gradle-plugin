@@ -54,7 +54,7 @@ open class GenerateOpenApi @Inject constructor() : SourceTask() {
 
     @TaskAction
     fun generateOpenApi() {
-        val contractsConfig = loadContractConfigurations(source.files.toList(), emptyList())
+        val contractsConfig = loadContractConfigurations(source.files.toList())
 
         if (contractsConfig.isNullOrEmpty()) return
 
