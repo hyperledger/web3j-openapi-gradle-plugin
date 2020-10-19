@@ -25,6 +25,9 @@ import org.web3j.openapi.codegen.config.GeneratorConfiguration
 import org.web3j.openapi.codegen.utils.GeneratorUtils.loadContractConfigurations
 import javax.inject.Inject
 
+/**
+ * Generates Open API Kotlin code from Solidity source files.
+ */
 @CacheableTask
 open class GenerateOpenApi @Inject constructor() : SourceTask() {
 
