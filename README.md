@@ -8,49 +8,11 @@ run independently.
 
 ## Plugin configuration
 
+To configure the Web3j Gradle Plugin using the plugins DSL or the legacy plugin application, 
+check the [plugin page](https://plugins.gradle.org/plugin/org.web3j). 
 The minimum Gradle version to run the plugin is `5.+`.
 
-PS: No need to add the `kotlin plugin` to your project. It already comes with the `web3j-openapi-gradle-plugin`.
-
-### Using the `buildscript` convention
-
-To install the Web3j Plugin using the old Gradle `buildscript` convention, you should add 
-the following to the first line of your build file:
-
-```groovy
-buildscript {
-  repositories {
-    maven { url 'https://plugins.gradle.org/m2/' }
-    maven { url 'https://repo.gradle.org/gradle/libs-releases' }
-  }
-  dependencies {
-    classpath 'org.web3j.openapi:web3j-openapi-gradle-plugin:4.7.0'
-  }
-}
-
-apply plugin: 'org.web3j.openapi'
-```
-
-### Using the plugins DSL
-
-Alternatively, if you are using the more modern plugins DSL, add the following line to your 
-build file:
-
-```groovy
-pluginManagement {
-    repositories {
-        gradlePluginPortal()
-        maven { url 'https://repo.gradle.org/gradle/libs-releases' }
-    }
-}
-
-plugins {
-    id 'org.web3j.openapi' version '4.7.0'
-}
-```
-
 Then run your project containing Solidity contracts:
-
 ```
 ./gradlew build
 ```
