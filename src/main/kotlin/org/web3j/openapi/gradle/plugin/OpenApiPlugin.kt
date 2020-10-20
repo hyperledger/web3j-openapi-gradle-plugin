@@ -12,7 +12,6 @@
  */
 package org.web3j.openapi.gradle.plugin
 
-import com.github.jengelman.gradle.plugins.shadow.ShadowPlugin
 import io.swagger.v3.plugins.gradle.SwaggerPlugin
 import io.swagger.v3.plugins.gradle.tasks.ResolveTask
 import org.codehaus.groovy.runtime.InvokerHelper
@@ -57,7 +56,6 @@ class OpenApiPlugin : Web3jPlugin() {
             apply(JavaPlugin::class.java)
             apply(KotlinPlatformJvmPlugin::class.java)
             apply(ApplicationPlugin::class.java)
-            apply(ShadowPlugin::class.java)
             apply(SwaggerGeneratorPlugin::class.java)
             apply(SwaggerPlugin::class.java)
         }
@@ -151,7 +149,7 @@ class OpenApiPlugin : Web3jPlugin() {
                 // Only generate wrappers if server generation is active
                 it.dependsOn(wrapperGeneration)
             } else {
-                // otherwise task must depend on Solidity compilation  
+                // otherwise task must depend on Solidity compilation
                 it.dependsOn(project.tasks.named("compile${sourceSetName}Solidity"))
             }
         }
