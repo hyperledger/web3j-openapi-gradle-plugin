@@ -13,11 +13,17 @@
 package org.web3j.openapi.gradle.plugin
 
 import org.gradle.api.DefaultTask
+import org.gradle.api.tasks.CacheableTask
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 import java.io.File
 
+/**
+ * Performs Swagger UI generation by calling Swagger plugins and moving the
+ * generated resources to the project resources output directory for runtime access.
+ */
+@CacheableTask
 open class GenerateSwaggerUi : DefaultTask() {
 
     @InputDirectory
@@ -28,9 +34,7 @@ open class GenerateSwaggerUi : DefaultTask() {
 
     init {
         val generateSwaggerOpenApiUi = project.tasks.getByName("generateSwaggerUIOpenapi")
-        val resolveTask = project.tasks.getByName("resolve")
-
-        generateSwaggerOpenApiUi.dependsOn(resolveTask)
+        generateSwaggerOpenApiUi.dependsOn(project.tasks.getByName("resolve"))
         this.dependsOn(generateSwaggerOpenApiUi)
     }
 

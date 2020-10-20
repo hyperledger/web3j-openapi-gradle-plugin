@@ -25,6 +25,9 @@ import org.web3j.openapi.codegen.config.GeneratorConfiguration
 import org.web3j.openapi.codegen.utils.GeneratorUtils.loadContractConfigurations
 import javax.inject.Inject
 
+/**
+ * Generates Open API Kotlin code from Solidity source files.
+ */
 @CacheableTask
 open class GenerateOpenApi @Inject constructor() : SourceTask() {
 
@@ -54,7 +57,7 @@ open class GenerateOpenApi @Inject constructor() : SourceTask() {
 
     @TaskAction
     fun generateOpenApi() {
-        val contractsConfig = loadContractConfigurations(source.files.toList(), emptyList())
+        val contractsConfig = loadContractConfigurations(source.files.toList())
 
         if (contractsConfig.isNullOrEmpty()) return
 
@@ -63,13 +66,7 @@ open class GenerateOpenApi @Inject constructor() : SourceTask() {
             packageName = packageName,
             outputDir = outputs.files.singleFile.absolutePath,
             contracts = excludeContracts(includeContracts(contractsConfig)),
-            addressLength = addressLength,
             contextPath = contextPath,
-            withSwaggerUi = false,
-            withWrappers = false,
-            withGradleResources = false,
-            withCoreBuildFile = false,
-            withServerBuildFile = false,
             withImplementations = generateServer
         )
         OpenApiGenerator(generatorConfiguration).generate()
