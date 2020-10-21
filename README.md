@@ -12,6 +12,9 @@ To configure the Web3j Gradle Plugin using the plugins DSL or the legacy plugin 
 check the [plugin page](https://plugins.gradle.org/plugin/org.web3j). 
 The minimum Gradle version to run the plugin is `5.+`.
 
+You *should not* add the Kotlin plugin to your project build. It already comes with the `web3j-openapi-gradle-plugin`
+and applying it again may cause issues.
+
 Then run your project containing Solidity contracts:
 ```
 ./gradlew build
