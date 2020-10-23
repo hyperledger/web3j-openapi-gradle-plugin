@@ -28,11 +28,12 @@ open class OpenApiExtension(
         return openApi
     }
 
-    override fun setGeneratedPackageName(generatedPackageName: String?) {
-        if (generatedPackageName?.contains(".{0}") == true)
+    override var generatedPackageName: String =
+        if (super.generatedPackageName.contains(".{0}")) {
             throw InvalidPropertiesFormatException("The .{0} notation is not accepted when generating an Web3j-OpenAPI project !")
-        super.setGeneratedPackageName("$generatedPackageName.wrappers")
-    }
+        } else {
+            "${super.generatedPackageName}.wrappers"
+        }
 
     override fun getDefaultGeneratedPackageName(project: Project): String = "org.web3j.openapi.wrappers"
 }

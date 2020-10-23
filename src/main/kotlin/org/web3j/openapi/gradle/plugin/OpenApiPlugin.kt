@@ -33,14 +33,14 @@ import java.nio.file.Paths
 
 class OpenApiPlugin : Web3jPlugin() {
 
-    override fun apply(project: Project) {
-        super.apply(project)
-        registerPlugins(project)
-        registerDependencies(project)
-        setProperties(project)
+    override fun apply(target: Project) {
+        super.apply(target)
+        registerPlugins(target)
+        registerDependencies(target)
+        setProperties(target)
 
-        val sourceSets: SourceSetContainer = project.convention.getPlugin(JavaPluginConvention::class.java).sourceSets
-        project.afterEvaluate { sourceSets.forEach { sourceSet -> configure(project, sourceSet) } }
+        val sourceSets: SourceSetContainer = target.convention.getPlugin(JavaPluginConvention::class.java).sourceSets
+        target.afterEvaluate { sourceSets.forEach { sourceSet -> configure(target, sourceSet) } }
     }
 
     private fun setProperties(project: Project) {
