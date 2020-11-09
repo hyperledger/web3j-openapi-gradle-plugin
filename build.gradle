@@ -22,6 +22,7 @@ apply {
         'jacoco',
         'java',
         'javadoc',
+        'junit',
         'repositories',
         'spotless',
     ].each { buildScript ->
@@ -59,7 +60,6 @@ dependencies {
     implementation("org.web3j.openapi:web3j-openapi-codegen:$web3jVersion") {
         exclude group: 'org.slf4j', module: 'slf4j-simple'
     }
-    testImplementation "org.junit.jupiter:junit-jupiter:$junitVersion"
     testImplementation "jakarta.ws.rs:jakarta.ws.rs-api:$jaxRsApi"
 
     configurations.all {
