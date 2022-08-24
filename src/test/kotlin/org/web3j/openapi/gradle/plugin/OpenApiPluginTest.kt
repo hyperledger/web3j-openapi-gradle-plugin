@@ -32,6 +32,8 @@ class OpenApiPluginTest {
         File(resource.file).parentFile
     }
 
+    private val WEB3J_VERSION = "4.9.4"
+
     private val buildFileContent = """
 			plugins {
                 id 'org.web3j.openapi'
@@ -69,10 +71,6 @@ class OpenApiPluginTest {
         val buildResult = gradleRunner.build()
         assertNotNull(buildResult.task(":generateWeb3jOpenApi"))
         assertEquals(SUCCESS, buildResult.task(":generateWeb3jOpenApi")!!.outcome)
-
-        val outputDir = File(testProjectDir, "build/generated/sources/web3j/main/kotlin")
-        val generatedApi = File(outputDir, "org/web3j/test/core/TestApi.kt")
-        assertTrue(generatedApi.exists())
 
         val upToDate = gradleRunner.build()
         assertNotNull(upToDate.task(":generateWeb3jOpenApi"))
