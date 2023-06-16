@@ -11,7 +11,7 @@ plugins {
 }
 
 description = 'Gradle plugin providing tasks to generate Web3j-OpenAPI project from Solidity.'
-sourceCompatibility = 1.8
+sourceCompatibility = 17
 
 ext {
     web3jVersion = version
@@ -38,7 +38,6 @@ apply {
 }
 
 repositories {
-    mavenLocal()
     maven {
         url 'https://plugins.gradle.org/m2/'
     }
@@ -131,8 +130,8 @@ tasks.withType(Test) {
 }
 
 compileKotlin {
-    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.jvmTarget = "17"
 }
 compileTestKotlin {
-    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.jvmTarget = "17"
 }

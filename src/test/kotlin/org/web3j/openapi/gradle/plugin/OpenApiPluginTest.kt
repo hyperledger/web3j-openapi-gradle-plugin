@@ -50,7 +50,6 @@ class OpenApiPluginTest {
 				}
 			}
             repositories {
-                mavenLocal()
                 mavenCentral()
             }
 		""".trimIndent()

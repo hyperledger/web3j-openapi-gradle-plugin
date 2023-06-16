@@ -65,23 +65,23 @@ class OpenApiPlugin : Web3jPlugin() {
         with(project.dependencies) {
             add("api", "org.web3j:web3j-openapi-server:$projectVersion")
             add("api", "org.web3j:web3j-openapi-core:$projectVersion")
-            add("implementation", "io.swagger.core.v3:swagger-annotations:2.1.3")
+            add("implementation", "io.swagger.core.v3:swagger-annotations:2.2.11")
             add("implementation", "org.glassfish.jersey.media:jersey-media-json-jackson:2.32")
             add("implementation", "org.glassfish.jersey.containers:jersey-container-servlet:2.32")
             add("implementation", "io.github.microutils:kotlin-logging:1.7.10")
-            add("swaggerUI", "org.webjars:swagger-ui:3.10.0")
+            add("swaggerUI", "org.webjars:swagger-ui:4.19.0")
         }
         project.configurations.onEach { config ->
             config.resolutionStrategy {
-                it.force("com.fasterxml.jackson.core:jackson-core:2.11.3")
-                it.force("com.fasterxml.jackson.core:jackson-databind:2.11.3")
-                it.force("com.fasterxml.jackson.core:jackson-annotations:2.11.3")
-                it.force("com.fasterxml.jackson.module:jackson-module-jaxb-annotations:2.11.3")
-                it.force("com.fasterxml.jackson.jaxrs:jackson-jaxrs-base:2.11.3")
-                it.force("com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:2.11.3")
-                it.force("com.fasterxml.jackson.jaxrs.datatype:jackson-datatype-jsr310:2.11.3")
-                it.force("org.jetbrains.kotlin:kotlin-stdlib:1.3.72")
-                it.force("org.jetbrains.kotlin:kotlin-stdlib-common:1.3.72")
+                it.force("com.fasterxml.jackson.core:jackson-core:2.15.2")
+                it.force("com.fasterxml.jackson.core:jackson-databind:2.15.2")
+                it.force("com.fasterxml.jackson.core:jackson-annotations:2.15.2")
+                it.force("com.fasterxml.jackson.module:jackson-module-jaxb-annotations:2.15.2")
+                it.force("com.fasterxml.jackson.jaxrs:jackson-jaxrs-base:2.15.2")
+                it.force("com.fasterxml.jackson.jaxrs:jackson-jaxrs-json-provider:2.15.2")
+                it.force("com.fasterxml.jackson.jaxrs.datatype:jackson-datatype-jsr310:2.15.2")
+                it.force("org.jetbrains.kotlin:kotlin-stdlib:1.6.21")
+                it.force("org.jetbrains.kotlin:kotlin-stdlib-common:1.6.21")
                 it.force("org.slf4j:slf4j-api:1.7.30")
             }
         }
