@@ -51,6 +51,7 @@ class OpenApiPluginTest {
 			}
             repositories {
                 mavenCentral()
+                maven { url "https://artifacts.consensys.net/public/maven/maven/" }
             }
 		""".trimIndent()
 
