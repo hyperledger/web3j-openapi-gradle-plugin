@@ -44,6 +44,9 @@ repositories {
     maven {
         url 'https://repo.gradle.org/gradle/libs-releases'
     }
+    maven {
+        url "https://artifacts.consensys.net/public/maven/maven/"
+    }
 }
 
 dependencies {
