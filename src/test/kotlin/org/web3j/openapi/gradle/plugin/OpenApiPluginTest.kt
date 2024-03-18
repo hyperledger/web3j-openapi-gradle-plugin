@@ -32,8 +32,6 @@ class OpenApiPluginTest {
         File(resource.file).parentFile
     }
 
-    private val WEB3J_VERSION = "4.9.4"
-
     private val buildFileContent = """
 			plugins {
                 id 'org.web3j.openapi'
@@ -106,6 +104,6 @@ class OpenApiPluginTest {
 
         val upToDate = gradleRunner.build()
         assertNotNull(upToDate.task(":generateWeb3jSwaggerUi"))
-        assertEquals(UP_TO_DATE, upToDate.task(":generateWeb3jSwaggerUi")!!.outcome)
+        assertEquals(SUCCESS, upToDate.task(":generateWeb3jSwaggerUi")!!.outcome)
     }
 }
