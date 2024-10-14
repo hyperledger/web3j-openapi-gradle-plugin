@@ -6,7 +6,7 @@ plugins {
     id 'maven-publish'
     id 'org.jetbrains.kotlin.jvm' version "$kotlinVersion"
     id 'com.diffplug.spotless' version '6.25.0'
-    id 'com.gradle.plugin-publish' version '0.21.0'
+    id 'com.gradle.plugin-publish' version '1.2.1'
     id 'de.undercouch.download' version '4.1.2'
 }
 
@@ -47,7 +47,7 @@ repositories {
 }
 
 dependencies {
-    implementation "org.web3j:web3j-gradle-plugin:$web3jVersion"
+    implementation "org.web3j:web3j-gradle-plugin:4.12.2"
     implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
     implementation "org.jetbrains.kotlin.multiplatform:org.jetbrains.kotlin.multiplatform.gradle.plugin:$kotlinVersion"
     implementation "gradle.plugin.org.hidetake:gradle-swagger-generator-plugin:$swaggerGenVersion"
@@ -56,7 +56,7 @@ dependencies {
     implementation("org.web3j:abi:$web3jVersion") {
         exclude group: 'org.slf4j', module: 'slf4j-nop'
     }
-    implementation("org.web3j:web3j-openapi-codegen:4.12.3-SNAPSHOT") {
+    implementation("org.web3j:web3j-openapi-codegen:$web3jVersion") {
         exclude group: 'org.slf4j', module: 'slf4j-simple'
     }
     testImplementation "jakarta.ws.rs:jakarta.ws.rs-api:$jaxRsApi"
@@ -81,29 +81,21 @@ dependencies {
 }
 
 gradlePlugin {
+    website = 'https://web3j.io/'
+    vcsUrl = 'https://github.com/web3j/web3j-openapi-gradle-plugin'
     plugins {
         openapi {
             id = 'org.web3j.openapi'
             implementationClass = 'org.web3j.openapi.gradle.plugin.OpenApiPlugin'
-        }
-    }
-}
-
-pluginBundle {
-    website = 'https://web3j.io/'
-    vcsUrl = 'https://github.com/web3j/web3j-openapi-gradle-plugin'
-    description = 'Gradle plugin providing tasks to generate Web3j-OpenAPI project from Solidity.'
-    tags = [
-        'solidity',
-        'ethereum',
-        'web3.js',
-        'web3j',
-        'openapi'
-    ]
-    plugins {
-        openapi {
-            // id is captured from java-gradle-plugin configuration
             displayName = project.description
+            description = 'Gradle plugin providing tasks to generate Web3j-OpenAPI project from Solidity.'
+            tags.set([
+                'solidity',
+                'ethereum',
+                'web3.js',
+                'web3j',
+                'openapi'
+            ])
         }
     }
 }

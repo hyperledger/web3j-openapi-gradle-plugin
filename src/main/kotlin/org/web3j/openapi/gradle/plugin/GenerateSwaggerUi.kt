@@ -48,7 +48,7 @@ open class GenerateSwaggerUi : DefaultTask() {
                 .resolve("static")
                 .resolve("swagger-ui")
                 .toFile(),
-            true
+            true,
         )
     }
 }

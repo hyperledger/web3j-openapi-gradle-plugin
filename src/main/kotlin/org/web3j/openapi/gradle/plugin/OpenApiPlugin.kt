@@ -25,7 +25,7 @@ import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.TaskProvider
 import org.hidetake.gradle.swagger.generator.SwaggerGeneratorPlugin
 import org.hidetake.gradle.swagger.generator.SwaggerSource
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformJvmPlugin
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper
 import org.web3j.gradle.plugin.Web3jExtension
 import org.web3j.gradle.plugin.Web3jPlugin
 import java.io.File
@@ -54,7 +54,7 @@ class OpenApiPlugin : Web3jPlugin() {
     private fun registerPlugins(project: Project) {
         with(project.pluginManager) {
             apply(JavaPlugin::class.java)
-            apply(KotlinPlatformJvmPlugin::class.java)
+            apply(KotlinPluginWrapper::class.java)
             apply(ApplicationPlugin::class.java)
             apply(SwaggerGeneratorPlugin::class.java)
             apply(SwaggerPlugin::class.java)
@@ -117,7 +117,7 @@ class OpenApiPlugin : Web3jPlugin() {
     private fun buildOpenApiTask(
         project: Project,
         sourceSet: SourceSet,
-        sourceOutputDir: File
+        sourceOutputDir: File,
     ): TaskProvider<GenerateOpenApi> {
         val sourceSetName = sourceSet.displayName.capitalize()
         val wrapperGeneration = project.tasks.named("generate${sourceSetName}ContractWrappers")
@@ -128,9 +128,11 @@ class OpenApiPlugin : Web3jPlugin() {
             project.tasks.register("generate${sourceSetName}Web3jOpenApi", GenerateOpenApi::class.java) {
                 it.group = Web3jExtension.NAME
                 it.description = "Generates${
-                    if (sourceSet.displayName.isNotEmpty())
+                    if (sourceSet.displayName.isNotEmpty()) {
                         " ${sourceSet.displayName}"
-                    else ""
+                    } else {
+                        ""
+                    }
                 } Web3j-OpenAPI classes from Solidity contracts."
                 it.source = buildSourceDirectorySet(project, sourceSet)
                 it.outputs.dir(sourceOutputDir)
@@ -165,10 +167,11 @@ class OpenApiPlugin : Web3jPlugin() {
     private fun configureSwaggerUi(
         project: Project,
         sourceSet: SourceSet,
-        generateOpenApiTask: TaskProvider<GenerateOpenApi>
+        generateOpenApiTask: TaskProvider<GenerateOpenApi>,
     ) {
         val generateSwaggerUi = project.tasks.register(
-            "generateWeb3jSwaggerUi", GenerateSwaggerUi::class.java
+            "generateWeb3jSwaggerUi",
+            GenerateSwaggerUi::class.java,
         ) {
             it.group = Web3jExtension.NAME
             it.description = "Generates Swagger UI from generated Web3j-OpenAPI."

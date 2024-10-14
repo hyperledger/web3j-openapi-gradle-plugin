@@ -18,7 +18,7 @@ import org.web3j.gradle.plugin.Web3jExtension
 import java.util.InvalidPropertiesFormatException
 
 open class OpenApiExtension(
-    private val project: Project
+    private val project: Project,
 ) : Web3jExtension(project) {
 
     var openApi: OpenApiConfiguration = OpenApiConfiguration(project)
@@ -29,8 +29,9 @@ open class OpenApiExtension(
     }
 
     override fun setGeneratedPackageName(generatedPackageName: String?) {
-        if (generatedPackageName?.contains(".{0}") == true)
+        if (generatedPackageName?.contains(".{0}") == true) {
             throw InvalidPropertiesFormatException("The .{0} notation is not accepted when generating an Web3j-OpenAPI project !")
+        }
         super.setGeneratedPackageName("$generatedPackageName.wrappers")
     }
 

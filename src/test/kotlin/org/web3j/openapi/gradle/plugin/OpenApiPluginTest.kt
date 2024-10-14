@@ -33,25 +33,25 @@ class OpenApiPluginTest {
     }
 
     private val buildFileContent = """
-			plugins {
-                id 'org.web3j.openapi'
+    plugins {
+        id 'org.web3j.openapi'
+    }
+    web3j {
+        generatedPackageName = 'org.web3j.test'
+        openapi { projectName = 'test' }
+    }
+    sourceSets {
+        main {
+            solidity {
+                srcDir { '${sourceDir.absolutePath}' }
             }
-            web3j {
-                generatedPackageName = 'org.web3j.test'
-                openapi { projectName = 'test' }
-            }
-			sourceSets {
-				main {
-					solidity {
-						srcDir { '${sourceDir.absolutePath}' }
-					}
-				}
-			}
-            repositories {
-                mavenCentral()
-                maven { url "https://artifacts.consensys.net/public/maven/maven/" }
-            }
-		""".trimIndent()
+        }
+    }
+    repositories {
+        mavenCentral()
+        maven { url "https://artifacts.consensys.net/public/maven/maven/" }
+    }
+    """.trimIndent()
 
     @Test
     fun generateOpenApi() {
@@ -61,10 +61,10 @@ class OpenApiPluginTest {
         }
 
         val gradleRunner = GradleRunner.create()
-                .withProjectDir(testProjectDir)
-                .withArguments("build")
-                .withPluginClasspath()
-                .forwardOutput()
+            .withProjectDir(testProjectDir)
+            .withArguments("build")
+            .withPluginClasspath()
+            .forwardOutput()
 
         val buildResult = gradleRunner.build()
         assertNotNull(buildResult.task(":generateWeb3jOpenApi"))
