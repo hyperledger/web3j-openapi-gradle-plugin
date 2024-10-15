@@ -33,25 +33,27 @@ class OpenApiPluginTest {
     }
 
     private val buildFileContent = """
-			plugins {
-                id 'org.web3j.openapi'
+    plugins {
+        id 'org.web3j.openapi'
+    }
+    web3j {
+        generatedPackageName = 'org.web3j.test'
+        openapi { projectName = 'test' }
+    }
+    sourceSets {
+        main {
+            solidity {
+                srcDir { '${sourceDir.absolutePath}' }
             }
-            web3j {
-                generatedPackageName = 'org.web3j.test'
-                openapi { projectName = 'test' }
-            }
-			sourceSets {
-				main {
-					solidity {
-						srcDir { '${sourceDir.absolutePath}' }
-					}
-				}
-			}
-            repositories {
-                mavenCentral()
-                maven { url "https://artifacts.consensys.net/public/maven/maven/" }
-            }
-		""".trimIndent()
+        }
+    }
+    repositories {
+        mavenCentral()
+        maven { url "https://artifacts.consensys.net/public/maven/maven/" }
+        maven { url 'https://oss.sonatype.org/content/repositories/releases/' }
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
+    }
+    """.trimIndent()
 
     @Test
     fun generateOpenApi() {
@@ -61,10 +63,10 @@ class OpenApiPluginTest {
         }
 
         val gradleRunner = GradleRunner.create()
-                .withProjectDir(testProjectDir)
-                .withArguments("build")
-                .withPluginClasspath()
-                .forwardOutput()
+            .withProjectDir(testProjectDir)
+            .withArguments("build")
+            .withPluginClasspath()
+            .forwardOutput()
 
         val buildResult = gradleRunner.build()
         assertNotNull(buildResult.task(":generateWeb3jOpenApi"))
@@ -104,6 +106,6 @@ class OpenApiPluginTest {
 
         val upToDate = gradleRunner.build()
         assertNotNull(upToDate.task(":generateWeb3jSwaggerUi"))
-        assertEquals(SUCCESS, upToDate.task(":generateWeb3jSwaggerUi")!!.outcome)
+        assertEquals(UP_TO_DATE, upToDate.task(":generateWeb3jSwaggerUi")!!.outcome)
     }
 }

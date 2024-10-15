@@ -17,7 +17,6 @@ import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.SourceTask
 import org.gradle.api.tasks.TaskAction
-
 import org.web3j.abi.datatypes.Address
 import org.web3j.openapi.codegen.OpenApiGenerator
 import org.web3j.openapi.codegen.config.ContractConfiguration
@@ -67,7 +66,7 @@ open class GenerateOpenApi @Inject constructor() : SourceTask() {
             outputDir = outputs.files.singleFile.absolutePath,
             contracts = excludeContracts(includeContracts(contractsConfig)),
             contextPath = contextPath,
-            withImplementations = generateServer
+            withImplementations = generateServer,
         )
         OpenApiGenerator(generatorConfiguration).generate()
     }

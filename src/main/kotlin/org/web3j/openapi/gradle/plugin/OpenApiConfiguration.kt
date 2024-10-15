@@ -22,15 +22,16 @@ open class OpenApiConfiguration(project: Project) {
     var projectName: String = if (project.rootProject.name.isNotBlank()) project.rootProject.name else "OpenApi"
 
     /**
-	 * Context path for the generated OpenAPI path.
-	 *
-	 * The resulting URIs path will be :
-	 * <code> /{contextPath}/{contractName}/... </code>
-	 */
+     * Context path for the generated OpenAPI path.
+     *
+     * The resulting URIs path will be :
+     * <code> /{contextPath}/{contractName}/... </code>
+     */
     var contextPath: String = projectName
         set(value) {
-            if (value.isNotBlank() && value.isNotEmpty())
+            if (value.isNotBlank() && value.isNotEmpty()) {
                 field = value.removePrefix("/")
+            }
         }
 
     /**
