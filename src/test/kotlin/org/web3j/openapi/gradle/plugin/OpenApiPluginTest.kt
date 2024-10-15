@@ -50,6 +50,8 @@ class OpenApiPluginTest {
     repositories {
         mavenCentral()
         maven { url "https://artifacts.consensys.net/public/maven/maven/" }
+        maven { url 'https://oss.sonatype.org/content/repositories/releases/' }
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
     }
     """.trimIndent()
 
@@ -104,6 +106,6 @@ class OpenApiPluginTest {
 
         val upToDate = gradleRunner.build()
         assertNotNull(upToDate.task(":generateWeb3jSwaggerUi"))
-        assertEquals(SUCCESS, upToDate.task(":generateWeb3jSwaggerUi")!!.outcome)
+        assertEquals(UP_TO_DATE, upToDate.task(":generateWeb3jSwaggerUi")!!.outcome)
     }
 }

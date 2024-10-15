@@ -127,3 +127,11 @@ compileKotlin {
 compileTestKotlin {
     kotlinOptions.jvmTarget = "17"
 }
+
+tasks.named("spotlessJava").configure {
+    dependsOn("processResources","compileTestKotlin","pluginUnderTestMetadata","processTestResources")
+}
+
+tasks.named("spotlessKotlin").configure {
+    dependsOn("compileTestKotlin", "processTestResources")
+}
